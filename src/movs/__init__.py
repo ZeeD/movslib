@@ -3,8 +3,8 @@ import decimal
 import itertools
 import typing
 
-import iterhelper
-import model
+from . import iterhelper
+from . import model
 
 
 def conv_date(dt: str) -> datetime.date:
