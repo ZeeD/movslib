@@ -10,8 +10,11 @@ import dataclasses
 csv_field_indexes = list(iterhelper.zip_with_next((1, 18, 32, 50, 69), None))
 
 
-def conv_date(dt: str) -> datetime.date:
-    return datetime.datetime.strptime(dt, '%d/%m/%Y').date()
+def conv_date(dt: str) -> typing.Optional[datetime.date]:
+    try:
+        return datetime.datetime.strptime(dt, '%d/%m/%Y').date()
+    except ValueError:
+        return None
 
 
 def conv_date_inv(d: datetime.date) -> str:

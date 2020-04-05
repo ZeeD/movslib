@@ -6,8 +6,8 @@ import typing
 
 @dataclasses.dataclass
 class KV:
-    da: datetime.date
-    a: datetime.date
+    da: typing.Optional[datetime.date]
+    a: typing.Optional[datetime.date]
     tipo: str
     conto_bancoposta: str
     intestato_a: str
