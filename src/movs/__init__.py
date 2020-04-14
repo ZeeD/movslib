@@ -111,7 +111,7 @@ def write_csv(f: typing.TextIO, csv: typing.Iterable[model.Row]) -> None:
         f.write('\n')
 
 
-def read_txt(fn: str) -> typing.Tuple[model.KV, typing.Iterable[model.Row]]:
+def read_txt(fn: str) -> typing.Tuple[model.KV, typing.Sequence[model.Row]]:
     with open(fn) as f:
         kv_file = itertools.islice(f, 8)
         csv_file = f
