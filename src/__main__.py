@@ -11,7 +11,7 @@ def main() ->None:
         print(f'row: {row}')
 
     fn += "DELME"
-    print('-'*80)
+    print('-' * 80)
 
     movs.write_txt(fn, kv, csv)
     kv, csv = movs.read_txt(fn)
