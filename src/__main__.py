@@ -1,4 +1,4 @@
-import logging
+#!/usr/bin/env python
 
 import movs
 
@@ -6,16 +6,18 @@ import movs
 def main() ->None:
     fn = 'resources/BPOL_Lista_Movimenti.txt'
     kv, csv = movs.read_txt(fn)
-    logging.warning('kv: %s', kv)
+    print(f'kv: {kv}')
     for row in csv:
-        logging.warning('row: %s', row)
+        print(f'row: {row}')
 
     fn += "DELME"
+    print('-'*80)
+
     movs.write_txt(fn, kv, csv)
     kv, csv = movs.read_txt(fn)
-    logging.warning('kv: %s', kv)
+    print(f'kv: {kv}')
     for row in csv:
-        logging.warning('row: %s', row)
+        print(f'row: {row}')
 
 
 if __name__ == '__main__':
