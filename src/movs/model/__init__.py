@@ -4,19 +4,19 @@ import decimal
 import typing
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class KV:
     da: typing.Optional[datetime.date]
     a: typing.Optional[datetime.date]
     tipo: str
     conto_bancoposta: str
     intestato_a: str
-    saldo_al: datetime.date
+    saldo_al: typing.Optional[datetime.date]
     saldo_contabile: decimal.Decimal
     saldo_disponibile: decimal.Decimal
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Row:
     data_contabile: datetime.date
     data_valuta: datetime.date

@@ -1,3 +1,4 @@
+import dataclasses
 import datetime
 import decimal
 import itertools
@@ -5,7 +6,7 @@ import typing
 
 from . import iterhelper
 from . import model
-import dataclasses
+
 
 csv_field_indexes = list(iterhelper.zip_with_next((1, 18, 32, 50, 69), None))
 
@@ -43,14 +44,19 @@ def read_kv(kv_file: typing.Iterable[str]) -> model.KV:
 
 
 def write_kv(f: typing.TextIO, kv: model.KV) -> None:
+    def tostr(type_: type,
+              e: typing.Union[datetime.date,
+                              decimal.Decimal,
+                              None,
+                              str]) -> str:
+        if type_ is datetime.date:
+            return conv_date_inv(typing.cast(datetime.date, e))
+        if type_ is decimal.Decimal:
+            return str(e).replace('.', ',') + '_' * 5
+        return str(e)
+
     for field in dataclasses.fields(model.KV):
-        if field.type is datetime.date:
-            tostr = conv_date_inv
-        elif field.type is decimal.Decimal:
-            tostr = lambda d: str(d).replace('.', ',') + '_' * 5
-        else:
-            tostr = lambda x: x
-        f.write(f'{field.name}: {tostr(getattr(kv, field.name))}\n')
+        f.write(f'{field.name}: {tostr(field.type, getattr(kv, field.name))}\n')
 
 
 def read_csv(csv_file: typing.Iterable[str]) -> typing.Iterable[model.Row]:
@@ -69,27 +75,38 @@ def read_csv(csv_file: typing.Iterable[str]) -> typing.Iterable[model.Row]:
         accrediti = conv_cvs_decimal(next(els))
         descrizione_operazioni = next(els)
 
+        if data_contabile is None:
+            raise ValueError()
+        if data_valuta is None:
+            raise ValueError()
+
         yield model.Row(data_contabile, data_valuta, addebiti, accrediti,
                         descrizione_operazioni)
 
 
 def write_csv(f: typing.TextIO, csv: typing.Iterable[model.Row]) -> None:
+    def tostr(type_: type,
+              e: typing.Union[datetime.date,
+                              None,
+                              decimal.Decimal,
+                              str]) -> str:
+        if type_ is datetime.date:
+            return conv_date_inv(typing.cast(datetime.date, e))
+        if type_ is typing.Optional[decimal.Decimal]:
+            return '' if e is None else str(e).replace('.', ',')
+        return str(e)
+
     f.write('\n')
     for row in csv:
         f.write(' ')
-        for (a, b), field in zip(csv_field_indexes, dataclasses.fields(model.Row)):
-            if field.type is datetime.date:
-                tostr = conv_date_inv
-            elif field.type is typing.Optional[decimal.Decimal]:
-                tostr = lambda d: '' if d is None else str(d).replace('.', ',')
-            else:
-                tostr = lambda x: x
-
+        for (a, b), field in zip(csv_field_indexes,
+                                 dataclasses.fields(model.Row)):
+            row_str = tostr(field.type, getattr(row, field.name))
             if b is not None:
-                l = b-a
-                f.write('%*.*s' % (-l, l, tostr(getattr(row, field.name))))
+                l = b - a
+                f.write('%*.*s' % (-l, l, row_str))
             else:
-                f.write(tostr(getattr(row, field.name)))
+                f.write(row_str)
 
         f.write('\n')
 
