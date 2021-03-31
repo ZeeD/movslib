@@ -3,7 +3,7 @@
 import movs
 
 
-def main() ->None:
+def main() -> None:
     fn = 'resources/BPOL_Lista_Movimenti.txt'
     kv, csv = movs.read_txt(fn)
     print(f'kv: {kv}')
