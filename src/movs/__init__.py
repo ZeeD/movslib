@@ -7,7 +7,6 @@ import typing
 from . import iterhelper
 from . import model
 
-
 csv_field_indexes = list(iterhelper.zip_with_next((1, 18, 32, 50, 69), None))
 
 

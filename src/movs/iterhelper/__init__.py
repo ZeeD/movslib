@@ -1,7 +1,6 @@
 import itertools
 import typing
 
-
 T = typing.TypeVar('T')
 
 
