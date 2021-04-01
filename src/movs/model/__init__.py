@@ -1,25 +1,25 @@
-import dataclasses
-import datetime
-import decimal
-import typing
+from dataclasses import dataclass
+from datetime import date
+from decimal import Decimal
+from typing import Optional
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclass(frozen=True)
 class KV:
-    da: typing.Optional[datetime.date]
-    a: typing.Optional[datetime.date]
+    da: Optional[date]
+    a: Optional[date]
     tipo: str
     conto_bancoposta: str
     intestato_a: str
-    saldo_al: typing.Optional[datetime.date]
-    saldo_contabile: decimal.Decimal
-    saldo_disponibile: decimal.Decimal
+    saldo_al: Optional[date]
+    saldo_contabile: Decimal
+    saldo_disponibile: Decimal
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclass(frozen=True)
 class Row:
-    data_contabile: datetime.date
-    data_valuta: datetime.date
-    addebiti: typing.Optional[decimal.Decimal]
-    accrediti: typing.Optional[decimal.Decimal]
+    data_contabile: date
+    data_valuta: date
+    addebiti: Optional[Decimal]
+    accrediti: Optional[Decimal]
     descrizione_operazioni: str
