@@ -1,11 +1,13 @@
-import itertools
-import typing
+from itertools import chain
+from typing import Iterable
+from typing import Optional
+from typing import Tuple
+from typing import TypeVar
 
-T = typing.TypeVar('T')
+T = TypeVar('T')
 
-
-def zip_with_next(it: typing.Iterable[T], last: typing.Optional[T]
-                  ) -> typing.Iterable[typing.Tuple[T, typing.Optional[T]]]:
-    c = itertools.chain(it, (last, ))
+def zip_with_next(it: Iterable[T],
+                  last: Optional[T]) -> Iterable[Tuple[T, Optional[T]]]:
+    c = chain(it, (last, ))
     next(c)
     return zip(it, c)

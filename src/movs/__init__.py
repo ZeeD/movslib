@@ -1,27 +1,36 @@
-import dataclasses
-import datetime
 import decimal
 import itertools
-import typing
+from dataclasses import fields
+from datetime import date
+from datetime import datetime
+from typing import Callable
+from typing import cast
+from typing import Iterable
+from typing import Optional
+from typing import Sequence
+from typing import TextIO
+from typing import Tuple
+from typing import Union
 
-from . import iterhelper
-from . import model
+from .iterhelper import zip_with_next
+from .model import KV
+from .model import Row
 
-csv_field_indexes = list(iterhelper.zip_with_next((1, 18, 32, 50, 69), None))
+csv_field_indexes = list(zip_with_next((1, 18, 32, 50, 69), None))
 
 
-def conv_date(dt: str) -> typing.Optional[datetime.date]:
+def conv_date(dt: str) -> Optional[date]:
     try:
-        return datetime.datetime.strptime(dt, '%d/%m/%Y').date()
+        return datetime.strptime(dt, '%d/%m/%Y').date()
     except ValueError:
         return None
 
 
-def conv_date_inv(d: datetime.date) -> str:
+def conv_date_inv(d: date) -> str:
     return d.strftime('%d/%m/%Y')
 
 
-def read_kv(kv_file: typing.Iterable[str]) -> model.KV:
+def read_kv(kv_file: Iterable[str]) -> KV:
 
     def next_token() -> str:
         return next(iter(kv_file)).rstrip().split(': ')[-1]
@@ -38,32 +47,32 @@ def read_kv(kv_file: typing.Iterable[str]) -> model.KV:
     saldo_contabile = conv_kv_decimal(next_token())
     saldo_disponibile = conv_kv_decimal(next_token())
 
-    return model.KV(da, a, tipo, conto_bancoposta, intestato_a, saldo_al,
+    return KV(da, a, tipo, conto_bancoposta, intestato_a, saldo_al,
                     saldo_contabile, saldo_disponibile)
 
 
 def fmt_value(type_: type,
-              e: typing.Union[datetime.date, decimal.Decimal, None, str],
-              conv_decimal_inv: typing.Callable[[decimal.Decimal], str]) -> str:
-    if type_ is datetime.date or type_ is typing.Optional[datetime.date]:
+              e: Union[date, decimal.Decimal, None, str],
+              conv_decimal_inv: Callable[[decimal.Decimal], str]) -> str:
+    if type_ is date or type_ is Optional[date]:
         if e is None:
             return ''
-        return conv_date_inv(typing.cast(datetime.date, e))
+        return conv_date_inv(cast(date, e))
 
-    if type_ is decimal.Decimal or type_ is typing.Optional[decimal.Decimal]:
+    if type_ is decimal.Decimal or type_ is Optional[decimal.Decimal]:
         if e is None:
             return ''
-        return conv_decimal_inv(typing.cast(decimal.Decimal, e))
+        return conv_decimal_inv(cast(decimal.Decimal, e))
 
     return str(e)
 
 
-def write_kv(f: typing.TextIO, kv: model.KV) -> None:
+def write_kv(f: TextIO, kv: KV) -> None:
     def conv_kv_decimal_inv(d: decimal.Decimal) -> str:
         fmtd = f'{d:,}'.replace(',', '_').replace('.', ',').replace('_', '.')
         return f'+{fmtd} Euro'
 
-    for field in dataclasses.fields(model.KV):
+    for field in fields(KV):
         field_key_str = {
             'da': 'da: (gg/mm/aaaa)',
             'a': ' a: (gg/mm/aaaa)',
@@ -80,9 +89,9 @@ def write_kv(f: typing.TextIO, kv: model.KV) -> None:
         f.write(f'{field_key_str}: {kv_str}\n')
 
 
-def read_csv(csv_file: typing.Iterable[str]) -> typing.Iterable[model.Row]:
+def read_csv(csv_file: Iterable[str]) -> Iterable[Row]:
 
-    def conv_cvs_decimal(dec: str) -> typing.Optional[decimal.Decimal]:
+    def conv_cvs_decimal(dec: str) -> Optional[decimal.Decimal]:
         if not dec:
             return None
         return decimal.Decimal(dec.replace('.', '').replace(',', '.'))
@@ -101,11 +110,11 @@ def read_csv(csv_file: typing.Iterable[str]) -> typing.Iterable[model.Row]:
         if data_valuta is None:
             raise ValueError()
 
-        yield model.Row(data_contabile, data_valuta, addebiti, accrediti,
+        yield Row(data_contabile, data_valuta, addebiti, accrediti,
                         descrizione_operazioni)
 
 
-def write_csv(f: typing.TextIO, csv: typing.Iterable[model.Row]) -> None:
+def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
     def conv_csv_decimal_inv(d: decimal.Decimal) -> str:
         fmtd = f'{d:,}'.replace(',', '_').replace('.', ',').replace('_', '.')
         return fmtd
@@ -113,20 +122,19 @@ def write_csv(f: typing.TextIO, csv: typing.Iterable[model.Row]) -> None:
     f.write(' Data Contabile   Data Valuta   Addebiti (euro)   Accrediti (euro)   Descrizione operazioni\n')
     for row in csv:
         f.write(' ')
-        for (a, b), field in zip(csv_field_indexes,
-                                 dataclasses.fields(model.Row)):
+        for (a, b), field in zip(csv_field_indexes, fields(Row)):
             value = getattr(row, field.name)
             row_str = fmt_value(field.type, value, conv_csv_decimal_inv)
             if b is not None:
-                l = b - a
-                f.write('%*.*s' % (-l, l, row_str))
+                diff = b - a
+                f.write('%*.*s' % (-diff, diff, row_str))
             else:
                 f.write(row_str)
 
         f.write('\n')
 
 
-def read_txt(fn: str) -> typing.Tuple[model.KV, typing.Sequence[model.Row]]:
+def read_txt(fn: str) -> Tuple[KV, Sequence[Row]]:
     with open(fn) as f:
         kv_file = itertools.islice(f, 8)
         csv_file = f
@@ -135,7 +143,7 @@ def read_txt(fn: str) -> typing.Tuple[model.KV, typing.Sequence[model.Row]]:
         return kv, csv
 
 
-def write_txt(fn: str, kv: model.KV, csv: typing.Iterable[model.Row]) -> None:
+def write_txt(fn: str, kv: KV, csv: Iterable[Row]) -> None:
     with open(fn, 'w') as f:
         write_kv(f, kv)
         write_csv(f, csv)
