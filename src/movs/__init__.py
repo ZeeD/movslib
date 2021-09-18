@@ -119,7 +119,11 @@ def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
         fmtd = f'{d:,}'.replace(',', '_').replace('.', ',').replace('_', '.')
         return fmtd
 
-    f.write(' Data Contabile   Data Valuta   Addebiti (euro)   Accrediti (euro)   Descrizione operazioni\n')
+    f.write(' Data Contabile'
+            '   Data Valuta'
+            '   Addebiti (euro)'
+            '   Accrediti (euro)'
+            '   Descrizione operazioni\n')
     for row in csv:
         f.write(' ')
         for (a, b), field in zip(csv_field_indexes, fields(Row)):
