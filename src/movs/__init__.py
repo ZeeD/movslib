@@ -48,7 +48,7 @@ def read_kv(kv_file: Iterable[str]) -> KV:
     saldo_disponibile = conv_kv_decimal(next_token())
 
     return KV(da, a, tipo, conto_bancoposta, intestato_a, saldo_al,
-                    saldo_contabile, saldo_disponibile)
+              saldo_contabile, saldo_disponibile)
 
 
 def fmt_value(type_: type,
@@ -111,7 +111,7 @@ def read_csv(csv_file: Iterable[str]) -> Iterable[Row]:
             raise ValueError()
 
         yield Row(data_contabile, data_valuta, addebiti, accrediti,
-                        descrizione_operazioni)
+                  descrizione_operazioni)
 
 
 def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
@@ -135,7 +135,7 @@ def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
 
 
 def read_txt(fn: str) -> Tuple[KV, Sequence[Row]]:
-    with open(fn) as f:
+    with open(fn, encoding='UTF-8') as f:
         kv_file = itertools.islice(f, 8)
         csv_file = f
         kv = read_kv(kv_file)
@@ -144,6 +144,6 @@ def read_txt(fn: str) -> Tuple[KV, Sequence[Row]]:
 
 
 def write_txt(fn: str, kv: KV, csv: Iterable[Row]) -> None:
-    with open(fn, 'w') as f:
+    with open(fn, 'w', encoding='UTF-8') as f:
         write_kv(f, kv)
         write_csv(f, csv)
