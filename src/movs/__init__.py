@@ -7,7 +7,6 @@ from typing import Callable
 from typing import cast
 from typing import Iterable
 from typing import Optional
-from typing import Sequence
 from typing import TextIO
 from typing import Tuple
 from typing import Union
@@ -138,7 +137,7 @@ def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
         f.write('\n')
 
 
-def read_txt(fn: str) -> Tuple[KV, Sequence[Row]]:
+def read_txt(fn: str) -> Tuple[KV, list[Row]]:
     with open(fn, encoding='UTF-8') as f:
         kv_file = itertools.islice(f, 8)
         csv_file = f
