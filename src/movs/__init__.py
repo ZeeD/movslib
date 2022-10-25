@@ -6,10 +6,7 @@ from datetime import datetime
 from typing import Callable
 from typing import cast
 from typing import Iterable
-from typing import Optional
 from typing import TextIO
-from typing import Tuple
-from typing import Union
 
 from .iterhelper import zip_with_next
 from .model import KV
@@ -18,7 +15,7 @@ from .model import Row
 csv_field_indexes = list(zip_with_next((1, 18, 32, 50, 69), None))
 
 
-def conv_date(dt: str) -> Optional[date]:
+def conv_date(dt: str) -> date | None:
     try:
         return datetime.strptime(dt, '%d/%m/%Y').date()
     except ValueError:
@@ -51,14 +48,14 @@ def read_kv(kv_file: Iterable[str]) -> KV:
 
 
 def fmt_value(type_: type,
-              e: Union[date, decimal.Decimal, None, str],
+              e: date | decimal.Decimal | None | str,
               conv_decimal_inv: Callable[[decimal.Decimal], str]) -> str:
-    if type_ is date or type_ is Optional[date]:
+    if type_ is date or type_ is None:
         if e is None:
             return ''
         return conv_date_inv(cast(date, e))
 
-    if type_ is decimal.Decimal or type_ is Optional[decimal.Decimal]:
+    if type_ is decimal.Decimal or type_ is None:
         if e is None:
             return ''
         return conv_decimal_inv(cast(decimal.Decimal, e))
@@ -89,8 +86,7 @@ def write_kv(f: TextIO, kv: KV) -> None:
 
 
 def read_csv(csv_file: Iterable[str]) -> Iterable[Row]:
-
-    def conv_cvs_decimal(dec: str) -> Optional[decimal.Decimal]:
+    def conv_cvs_decimal(dec: str) -> decimal.Decimal | None:
         if not dec:
             return None
         return decimal.Decimal(dec.replace('.', '').replace(',', '.'))
@@ -137,7 +133,7 @@ def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
         f.write('\n')
 
 
-def read_txt(fn: str) -> Tuple[KV, list[Row]]:
+def read_txt(fn: str) -> tuple[KV, list[Row]]:
     with open(fn, encoding='UTF-8') as f:
         kv_file = itertools.islice(f, 8)
         csv_file = f

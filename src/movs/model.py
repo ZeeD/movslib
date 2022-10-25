@@ -1,17 +1,17 @@
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from typing import Optional, ClassVar
+from typing import ClassVar
 
 
 @dataclass(frozen=True)
 class KV:
-    da: Optional[date]
-    a: Optional[date]
+    da: date | None
+    a: date | None
     tipo: str
     conto_bancoposta: str
     intestato_a: str
-    saldo_al: Optional[date]
+    saldo_al: date | None
     saldo_contabile: Decimal
     saldo_disponibile: Decimal
 
@@ -22,8 +22,8 @@ class Row:
 
     data_contabile: date
     data_valuta: date
-    addebiti: Optional[Decimal]
-    accrediti: Optional[Decimal]
+    addebiti: Decimal | None
+    accrediti: Decimal | None
     descrizione_operazioni: str
 
     @property
