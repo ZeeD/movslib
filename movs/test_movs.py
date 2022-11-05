@@ -6,7 +6,6 @@ from . import conv_date
 from . import conv_date_inv
 from . import fmt_value
 from . import read_kv
-from . import read_txt
 from .model import KV
 
 
@@ -44,30 +43,25 @@ class TestMovs(TestCase):
         self.assertEqual(expected, actual)
 
     def test_fmt_value_none(self) -> None:
-        expected = fmt_value(None, None, lambda _: '')
-        actual = ''
-
-        self.assertEqual(expected, actual)
-
-        expected = fmt_value(Decimal, None, lambda _: '')
+        expected = fmt_value(None, lambda _: '')
         actual = ''
 
         self.assertEqual(expected, actual)
 
     def test_fmt_value_date(self) -> None:
-        expected = fmt_value(date, date(1982, 5, 11), lambda _: '')
+        expected = fmt_value(date(1982, 5, 11), lambda _: '')
         actual = '11/05/1982'
 
         self.assertEqual(expected, actual)
 
     def test_fmt_value_decimal(self) -> None:
-        expected = fmt_value(Decimal, Decimal(1), lambda d: f'_{d}_')
+        expected = fmt_value(Decimal(1), lambda d: f'_{d}_')
         actual = '_1_'
 
         self.assertEqual(expected, actual)
 
     def test_fmt_value_str(self) -> None:
-        expected = fmt_value(str, 'foo', lambda _: '')
+        expected = fmt_value('foo', lambda _: '')
         actual = 'foo'
 
         self.assertEqual(expected, actual)

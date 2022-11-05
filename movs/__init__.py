@@ -47,18 +47,16 @@ def read_kv(kv_file: Iterable[str]) -> KV:
               saldo_contabile, saldo_disponibile)
 
 
-def fmt_value(type_: type | None,
-              e: date | Decimal | None | str,
+def fmt_value(e: None | date | Decimal | str,
               conv_decimal_inv: Callable[[Decimal], str]) -> str:
-    if type_ is date or type_ is None:
-        if e is None:
-            return ''
-        return conv_date_inv(cast(date, e))
+    if e is None:
+        return ''
 
-    if type_ is Decimal or type_ is None:
-        if e is None:
-            return ''
-        return conv_decimal_inv(cast(Decimal, e))
+    if isinstance(e, date):
+        return conv_date_inv(e)
+
+    if isinstance(e, Decimal):
+        return conv_decimal_inv(e)
 
     return str(e)
 
@@ -81,7 +79,7 @@ def write_kv(f: TextIO, kv: KV) -> None:
         }[field.name]
 
         value = getattr(kv, field.name)
-        kv_str = fmt_value(field.type, value, conv_kv_decimal_inv)
+        kv_str = fmt_value(value, conv_kv_decimal_inv)
         f.write(f'{field_key_str}: {kv_str}\n')
 
 
@@ -123,7 +121,7 @@ def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
         f.write(' ')
         for (a, b), field in zip(csv_field_indexes, fields(Row)):
             value = getattr(row, field.name)
-            row_str = fmt_value(field.type, value, conv_csv_decimal_inv)
+            row_str = fmt_value(value, conv_csv_decimal_inv)
             if b is not None:
                 diff = b - a
                 f.write('%*.*s' % (-diff, diff, row_str))
