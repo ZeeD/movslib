@@ -1,8 +1,8 @@
-import decimal
-import itertools
 from dataclasses import fields
 from datetime import date
 from datetime import datetime
+from decimal import Decimal
+from itertools import islice
 from typing import Callable
 from typing import cast
 from typing import Iterable
@@ -31,8 +31,8 @@ def read_kv(kv_file: Iterable[str]) -> KV:
     def next_token() -> str:
         return next(iter(kv_file)).rstrip().split(': ')[-1]
 
-    def conv_kv_decimal(dec: str) -> decimal.Decimal:
-        return decimal.Decimal(dec.replace('.', '').replace(',', '.')[:-5])
+    def conv_kv_decimal(dec: str) -> Decimal:
+        return Decimal(dec.replace('.', '').replace(',', '.')[:-5])
 
     da = conv_date(next_token())
     a = conv_date(next_token())
@@ -47,24 +47,24 @@ def read_kv(kv_file: Iterable[str]) -> KV:
               saldo_contabile, saldo_disponibile)
 
 
-def fmt_value(type_: type,
-              e: date | decimal.Decimal | None | str,
-              conv_decimal_inv: Callable[[decimal.Decimal], str]) -> str:
+def fmt_value(type_: type | None,
+              e: date | Decimal | None | str,
+              conv_decimal_inv: Callable[[Decimal], str]) -> str:
     if type_ is date or type_ is None:
         if e is None:
             return ''
         return conv_date_inv(cast(date, e))
 
-    if type_ is decimal.Decimal or type_ is None:
+    if type_ is Decimal or type_ is None:
         if e is None:
             return ''
-        return conv_decimal_inv(cast(decimal.Decimal, e))
+        return conv_decimal_inv(cast(Decimal, e))
 
     return str(e)
 
 
 def write_kv(f: TextIO, kv: KV) -> None:
-    def conv_kv_decimal_inv(d: decimal.Decimal) -> str:
+    def conv_kv_decimal_inv(d: Decimal) -> str:
         fmtd = f'{d:,}'.replace(',', '_').replace('.', ',').replace('_', '.')
         return f'+{fmtd} Euro'
 
@@ -86,12 +86,12 @@ def write_kv(f: TextIO, kv: KV) -> None:
 
 
 def read_csv(csv_file: Iterable[str]) -> Iterable[Row]:
-    def conv_cvs_decimal(dec: str) -> decimal.Decimal | None:
+    def conv_cvs_decimal(dec: str) -> Decimal | None:
         if not dec:
             return None
-        return decimal.Decimal(dec.replace('.', '').replace(',', '.'))
+        return Decimal(dec.replace('.', '').replace(',', '.'))
 
-    for row in itertools.islice(csv_file, 1, None):
+    for row in islice(csv_file, 1, None):
         els = (row[a:b].rstrip() for a, b in csv_field_indexes)
 
         data_contabile = conv_date(next(els))
@@ -110,7 +110,7 @@ def read_csv(csv_file: Iterable[str]) -> Iterable[Row]:
 
 
 def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
-    def conv_csv_decimal_inv(d: decimal.Decimal) -> str:
+    def conv_csv_decimal_inv(d: Decimal) -> str:
         fmtd = f'{d:,}'.replace(',', '_').replace('.', ',').replace('_', '.')
         return fmtd
 
@@ -135,7 +135,7 @@ def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
 
 def read_txt(fn: str) -> tuple[KV, list[Row]]:
     with open(fn, encoding='UTF-8') as f:
-        kv_file = itertools.islice(f, 8)
+        kv_file = islice(f, 8)
         csv_file = f
         kv = read_kv(kv_file)
         csv = list(read_csv(csv_file))
