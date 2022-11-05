@@ -1,4 +1,5 @@
 from unittest import TestCase
+
 from .iterhelper import zip_with_next
 
 
