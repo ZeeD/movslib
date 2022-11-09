@@ -4,7 +4,6 @@ from datetime import datetime
 from decimal import Decimal
 from itertools import islice
 from typing import Callable
-from typing import cast
 from typing import Iterable
 from typing import TextIO
 
@@ -99,9 +98,9 @@ def read_csv(csv_file: Iterable[str]) -> Iterable[Row]:
         descrizione_operazioni = next(els)
 
         if data_contabile is None:
-            raise ValueError()
+            raise ValueError(f'{data_contabile=}')
         if data_valuta is None:
-            raise ValueError()
+            raise ValueError(f'{data_valuta=}')
 
         yield Row(data_contabile, data_valuta, addebiti, accrediti,
                   descrizione_operazioni)

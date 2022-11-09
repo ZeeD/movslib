@@ -5,63 +5,108 @@ from unittest import TestCase
 from . import conv_date
 from . import conv_date_inv
 from . import fmt_value
-from . import read_kv
-from .model import KV
+from . import read_kv, write_kv, read_csv
+from .model import KV, Row
+from io import StringIO
 
 
 class TestMovs(TestCase):
     def test_conv_date(self) -> None:
-        expected = conv_date('11/05/1982')
-        actual = date(1982, 5, 11)
+        expected = date(1982, 5, 11)
+        actual = conv_date('11/05/1982')
 
         self.assertEqual(expected, actual)
 
     def test_conv_date_invalid(self) -> None:
-        expected = conv_date('invalid')
-        actual = None
+        expected = None
+        actual = conv_date('invalid')
 
         self.assertEqual(expected, actual)
 
     def test_conv_date_inv(self) -> None:
-        expected = conv_date_inv(date(1982, 5, 11))
-        actual = '11/05/1982'
+        expected = '11/05/1982'
+        actual = conv_date_inv(date(1982, 5, 11))
 
         self.assertEqual(expected, actual)
 
     def test_read_kv(self) -> None:
-        expected = read_kv(iter(('',
-                                 '',
-                                 ': tipo',
-                                 ': conto_bancoposta',
-                                 ': intestato_a',
-                                 '',
-                                 ': 0_____',
-                                 ': 0_____')))
-        actual = KV(None, None, 'tipo', 'conto_bancoposta',
-                    'intestato_a', None, Decimal(0), Decimal(0))
+        expected = KV(None, None, 'tipo', 'conto_bancoposta',
+                      'intestato_a', None, Decimal(0), Decimal(0))
+        actual = read_kv(iter(('',
+                               '',
+                               ': tipo',
+                               ': conto_bancoposta',
+                               ': intestato_a',
+                               '',
+                               ': 0_____',
+                               ': 0_____')))
 
         self.assertEqual(expected, actual)
 
     def test_fmt_value_none(self) -> None:
-        expected = fmt_value(None, lambda _: '')
-        actual = ''
+        expected = ''
+        actual = fmt_value(None, lambda _: '')
 
         self.assertEqual(expected, actual)
 
     def test_fmt_value_date(self) -> None:
-        expected = fmt_value(date(1982, 5, 11), lambda _: '')
-        actual = '11/05/1982'
+        expected = '11/05/1982'
+        actual = fmt_value(date(1982, 5, 11), lambda _: '')
 
         self.assertEqual(expected, actual)
 
     def test_fmt_value_decimal(self) -> None:
-        expected = fmt_value(Decimal(1), lambda d: f'_{d}_')
-        actual = '_1_'
+        expected = '_1_'
+        actual = fmt_value(Decimal(1), lambda d: f'_{d}_')
 
         self.assertEqual(expected, actual)
 
     def test_fmt_value_str(self) -> None:
-        expected = fmt_value('foo', lambda _: '')
-        actual = 'foo'
+        expected = 'foo'
+        actual = fmt_value('foo', lambda _: '')
 
         self.assertEqual(expected, actual)
+
+    def test_write_kv(self) -> None:
+        expected = ('da: (gg/mm/aaaa): \n'
+                    ' a: (gg/mm/aaaa): \n'
+                    ' Tipo(operazioni): tipo\n'
+                    ' Conto BancoPosta n.: conto_bancoposta\n'
+                    ' Intestato a: intestato_a\n'
+                    ' Saldo al: \n'
+                    ' Saldo contabile: +0 Euro\n'
+                    ' Saldo disponibile: +0 Euro\n')
+        with StringIO() as stringio:
+            write_kv(stringio, KV(None, None, 'tipo', 'conto_bancoposta',
+                                  'intestato_a', None, Decimal(0), Decimal(0)))
+            actual = stringio.getvalue()
+
+        self.assertEqual(expected, actual)
+
+    def test_read_csv(self) -> None:
+        expected = [Row(date(1982, 5, 11),
+                        date(2022, 5, 11), Decimal('12'), None, '')]
+        actual = read_csv(('',
+                           ' 11/05/1982       11/05/2022    12'))
+
+        self.assertListEqual(expected, list(actual))
+
+        with self.assertRaises(ValueError):
+            list(read_csv(('', '')))
+
+        with self.assertRaises(ValueError):
+            list(read_csv(('', ' 11/05/1982')))
+
+    def test_write_csv(self) -> None:
+        expected = [Row(date(1982, 5, 11),
+                        date(2022, 5, 11), Decimal('12'), None, '')]
+        actual = read_csv(('',
+                           ' 11/05/1982       11/05/2022    12'))
+
+        self.assertListEqual(expected, list(actual))
+
+        with self.assertRaises(ValueError):
+            list(read_csv(('', '')))
+
+        with self.assertRaises(ValueError):
+            list(read_csv(('', ' 11/05/1982')))
