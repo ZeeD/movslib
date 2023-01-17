@@ -67,7 +67,7 @@ def write_kv(f: TextIO, kv: KV) -> None:
 
     for field in fields(KV):
         field_key_str = {
-            'da': 'da: (gg/mm/aaaa)',
+            'da': ' da: (gg/mm/aaaa)',
             'a': ' a: (gg/mm/aaaa)',
             'tipo': ' Tipo(operazioni)',
             'conto_bancoposta': ' Conto BancoPosta n.',
