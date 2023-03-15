@@ -33,3 +33,7 @@ class Row:
         if self.accrediti is not None:
             return self.accrediti
         return Row.zero
+
+    @property
+    def date(self) -> date:
+        return self.data_valuta
