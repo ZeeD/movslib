@@ -3,45 +3,37 @@ from decimal import Decimal
 from unittest import TestCase
 
 from .model import Row
+from .model import Rows
 
-data_contabile = date(2022, 11, 5)
-data_valuta = date(2022, 11, 5)
-descrizione_operazioni = 'descrizione_operazioni'
+DATA_CONTABILE = date(2022, 11, 5)
+DATA_VALUTA = date(2022, 11, 6)
+ADDEBITI = Decimal(123)
+ACCREDITI = None
+DESCRIZIONE_OPERAZIONI = 'DESCRIZIONE_OPERAZIONI'
 
 
 class TestRow(TestCase):
-    def test_money_addebiti(self) -> None:
-        addebiti = Decimal('123')
-        accrediti = None
+    def test_money(self) -> None:
+        money = Decimal(123)
+        for expected, addebiti, accrediti in ((-money, money, None),
+                                              (money, None, money),
+                                              (Row.zero, None, None)):
+            with self.subTest(expected=expected,
+                              accrediti=accrediti,
+                              addebiti=addebiti):
+                self.assertEqual(expected,
+                                 Row(DATA_CONTABILE, DATA_VALUTA, addebiti,
+                                     accrediti, DESCRIZIONE_OPERAZIONI).money)
 
-        row = Row(data_contabile, data_valuta, addebiti,
-                  accrediti, descrizione_operazioni)
+    def test_date_is_data_valuta(self) -> None:
+        self.assertEqual(DATA_VALUTA,
+                         Row(DATA_CONTABILE, DATA_VALUTA, ADDEBITI, ACCREDITI,
+                             DESCRIZIONE_OPERAZIONI).date)
 
-        expected = Decimal('-123')
-        actual = row.money
 
-        self.assertEqual(expected, actual)
+NAME = 'name'
 
-    def test_money_accrediti(self) -> None:
-        addebiti = None
-        accrediti = Decimal('123')
 
-        row = Row(data_contabile, data_valuta, addebiti,
-                  accrediti, descrizione_operazioni)
-
-        expected = Decimal('123')
-        actual = row.money
-
-        self.assertEqual(expected, actual)
-
-    def test_money_zero(self) -> None:
-        addebiti = None
-        accrediti = None
-
-        row = Row(data_contabile, data_valuta, addebiti,
-                  accrediti, descrizione_operazioni)
-
-        expected = Decimal('0')
-        actual = row.money
-
-        self.assertEqual(expected, actual)
+class TestRows(TestCase):
+    def test_ctor(self) -> None:
+        self.assertEqual(NAME, Rows(NAME).name)

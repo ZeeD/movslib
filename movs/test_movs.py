@@ -68,7 +68,7 @@ class TestMovs(TestCase):
         self.assertEqual(expected, actual)
 
     def test_write_kv(self) -> None:
-        expected = ('da: (gg/mm/aaaa): \n'
+        expected = (' da: (gg/mm/aaaa): \n'
                     ' a: (gg/mm/aaaa): \n'
                     ' Tipo(operazioni): tipo\n'
                     ' Conto BancoPosta n.: conto_bancoposta\n'
