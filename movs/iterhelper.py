@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from itertools import chain
-from typing import Iterable
 from typing import TypeVar
 
 T = TypeVar('T')

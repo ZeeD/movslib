@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
@@ -37,3 +38,8 @@ class Row:
     @property
     def date(self) -> date:
         return self.data_valuta
+
+class Rows(list[Row]):
+    def __init__(self, name: str, iterable: Iterable[Row]=()):
+        super().__init__(iterable)
+        self.name = name

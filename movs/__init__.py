@@ -1,15 +1,17 @@
+from collections.abc import Iterable
 from dataclasses import fields
 from datetime import date
 from datetime import datetime
 from decimal import Decimal
 from itertools import islice
-from typing import Callable
-from typing import Iterable
+from collections.abc import Callable
+from typing import overload
 from typing import TextIO
 
 from .iterhelper import zip_with_next
 from .model import KV
 from .model import Row
+from .model import Rows
 
 csv_field_indexes = list(zip_with_next((1, 18, 32, 50, 69), None))
 
@@ -130,13 +132,21 @@ def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
         f.write('\n')
 
 
-def read_txt(fn: str) -> tuple[KV, list[Row]]:
+@overload
+def read_txt(fn: str) -> tuple[KV, list[Row]]: ...
+
+
+@overload
+def read_txt(fn: str, name: str) -> tuple[KV, Rows]: ...
+
+
+def read_txt(fn: str, name: str | None = None) -> tuple[KV, list[Row] | Rows]:
     with open(fn, encoding='UTF-8') as f:
         kv_file = islice(f, 8)
         csv_file = f
         kv = read_kv(kv_file)
-        csv = list(read_csv(csv_file))
-        return kv, csv
+        csv = read_csv(csv_file)
+        return kv, (list(csv) if name is None else Rows(name, csv))
 
 
 def write_txt(fn: str, kv: KV, csv: Iterable[Row]) -> None:
