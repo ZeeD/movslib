@@ -22,13 +22,33 @@ from ..model import ZERO
 TEMPLATE = f'{dirname(__file__)}/template.json'
 
 
-def conv_date(dt: str) -> date:
+@overload
+def conv_date(dt: str) -> date: ...
+
+
+@overload
+def conv_date(dt: float) -> None: ...
+
+
+def conv_date(dt: str | float) -> date | None:
+    if isinstance(dt, float):
+        assert isnan(dt), f'{dt=}'
+        return None
     return datetime.strptime(dt, '%d/%m/%y').date()
+
+
+@overload
+def conv_decimal(dec: str) -> Decimal: ...
+
+
+@overload
+def conv_decimal(dec: float) -> None: ...
 
 
 def conv_decimal(dec: str | float) -> Decimal | None:
     if isinstance(dec, float):
-        return None if isnan(dec) else Decimal(dec)
+        assert isnan(dec), f'{dec=}'
+        return None
     return Decimal(dec.replace('.', '').replace(',', '.'))
 
 
@@ -38,10 +58,12 @@ def read_kv(tables: list[DataFrame]) -> KV:
     da = a = saldo_al = conv_date(month)
 
     conto_bancoposta = f'{tables[1].at[0,0]:012d}'
-    assert isinstance(conto_bancoposta, str), f'{type(conto_bancoposta)=}, {conto_bancoposta=}'
+    assert isinstance(conto_bancoposta,
+                      str), f'{type(conto_bancoposta)=}, {conto_bancoposta=}'
 
     intestato_a = tables[2].at[0, 0]
-    assert isinstance(intestato_a, str), f'{type(intestato_a)=}, {intestato_a=}'
+    assert isinstance(
+        intestato_a, str), f'{type(intestato_a)=}, {intestato_a=}'
 
     last = tables[-1]
     _, lastrow = list(last.iterrows())[-1]
@@ -76,6 +98,7 @@ def isnan_(obj: float | str) -> bool:
 
 def read_csv(tables: list[DataFrame]) -> list[Row]:
     ret: list[Row] = []
+
     for table in tables[4:]:
         t_row: TRow = {}
         for _, row in table.iterrows():
@@ -83,14 +106,14 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
             if all(map(isnan_, [data, valuta, addebiti, accrediti])):
                 if not t_row:
                     raise Exception('missing continuation')
-                t_row['descrizione_operazioni'] += descr
+                t_row['descrizione_operazioni'] += f' {descr}'
             else:
                 if t_row:
                     ret.append(Row(**t_row))
                 t_row = {}
 
                 t_row['data_contabile'] = conv_date(data)
-                t_row['data_valuta'] = conv_date(data)
+                t_row['data_valuta'] = conv_date(valuta)
                 t_row['addebiti'] = conv_decimal(addebiti)
                 t_row['accrediti'] = conv_decimal(accrediti)
                 t_row['descrizione_operazioni'] = descr
@@ -99,7 +122,8 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
                 ret.append(Row(**t_row))
             t_row = {}
 
-    return ret
+    # drop 'SALDO INIZIALE' and 'SALDO FINALE'
+    return ret[1:-1]
 
 
 @overload
