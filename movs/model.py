@@ -2,7 +2,6 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from typing import ClassVar
 from typing import Final
 
 ZERO: Final = Decimal(0)
@@ -22,8 +21,6 @@ class KV:
 
 @dataclass(frozen=True)
 class Row:
-    zero: ClassVar[Decimal] = ZERO
-
     data_contabile: date
     data_valuta: date
     addebiti: Decimal | None
