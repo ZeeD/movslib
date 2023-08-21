@@ -106,6 +106,15 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
 
     for table in tables[4:]:
         t_row: TRow = {}
+
+        def h() -> None:
+            nonlocal ret
+            nonlocal t_row
+
+            if t_row and t_row['descrizione_operazioni'] not in ('TOTALE USCITE', 'TOTALE ENTRATE'):
+                ret.append(Row(**t_row))
+            t_row = {}
+
         for _, row in table.iterrows():
             data, valuta, *_,  addebiti, accrediti, descr = row.to_list()
             if all(map(isnan_, [data, valuta, addebiti, accrediti])):
@@ -113,9 +122,7 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
                     raise Exception('missing continuation')
                 t_row['descrizione_operazioni'] += f' {descr}'
             else:
-                if t_row:
-                    ret.append(Row(**t_row))
-                t_row = {}
+                h()
 
                 t_row['data_contabile'] = conv_date(data)
                 t_row['data_valuta'] = conv_date(valuta)
@@ -123,9 +130,7 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
                 t_row['accrediti'] = conv_decimal(accrediti)
                 t_row['descrizione_operazioni'] = descr
         else:
-            if t_row:
-                ret.append(Row(**t_row))
-            t_row = {}
+            h()
 
     # drop 'SALDO INIZIALE' and 'SALDO FINALE'
     return ret[1:-1]

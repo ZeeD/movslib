@@ -9,6 +9,7 @@ from .model import Row
 
 PATH_1 = f'{dirname(__file__)}/../test_estrattoconto_1.pdf'
 PATH_2 = f'{dirname(__file__)}/../test_estrattoconto_2.pdf'
+PATH_3 = f'{dirname(__file__)}/../test_estrattoconto_3.pdf'
 
 
 class TestEstrattoconto(TestCase):
@@ -102,8 +103,14 @@ class TestEstrattoconto(TestCase):
         self.assertEqual(expected_rows, rows)
 
     def test_path_2(self) -> None:
-        kv, rows = read_estrattoconto(PATH_2)
+        _ = read_estrattoconto(PATH_2)
 
+    def test_path_3(self) -> None:
+        _, rows = read_estrattoconto(PATH_3)
+
+        descrizione_operazioni = {row.descrizione_operazioni for row in rows}
+        self.assertNotIn('TOTALE USCITE', descrizione_operazioni)
+        self.assertNotIn('TOTALE ENTRATE', descrizione_operazioni)
 
 if __name__ == '__main__':
     main()
