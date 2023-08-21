@@ -6,6 +6,7 @@ from math import isnan
 from math import nan
 from os.path import dirname
 from typing import Any
+from typing import Final
 from typing import Literal
 from typing import NotRequired
 from typing import overload
@@ -14,14 +15,16 @@ from typing import TypedDict
 from pandas import DataFrame
 from tabula.io import read_pdf_with_template
 
+from pypdf import PdfReader
+
 from ..model import KV
 from ..model import Row
 from ..model import Rows
 from ..model import ZERO
-from pypdf import PdfReader
 
-TEMPLATE_2 = f'{dirname(__file__)}/template_2.json'
-TEMPLATE_3 = f'{dirname(__file__)}/template_3.json'
+TEMPLATE_1: Final = f'{dirname(__file__)}/template_1.json'
+TEMPLATE_2: Final = f'{dirname(__file__)}/template_2.json'
+TEMPLATE_3: Final = f'{dirname(__file__)}/template_3.json'
 
 
 @overload
@@ -138,9 +141,11 @@ def read_estrattoconto(fn: str, name: str) -> tuple[KV, Rows]: ...
 
 def read_estrattoconto(fn: str, name: str | None = None) -> tuple[KV, list[Row] | Rows]:
     template = {
+        1: TEMPLATE_1,
         2: TEMPLATE_2,
         3: TEMPLATE_3,
         10: TEMPLATE_2,  # dicembre
+        13: TEMPLATE_2,  # marzo 2021
     }[len(PdfReader(fn).pages)]
 
     tables = read_pdf_with_template(fn,
