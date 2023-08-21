@@ -3,6 +3,9 @@ from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 from typing import ClassVar
+from typing import Final
+
+ZERO: Final = Decimal(0)
 
 
 @dataclass(frozen=True)
@@ -19,7 +22,7 @@ class KV:
 
 @dataclass(frozen=True)
 class Row:
-    zero: ClassVar[Decimal] = Decimal(0)
+    zero: ClassVar[Decimal] = ZERO
 
     data_contabile: date
     data_valuta: date
@@ -33,11 +36,12 @@ class Row:
             return -self.addebiti
         if self.accrediti is not None:
             return self.accrediti
-        return Row.zero
+        return ZERO
 
     @property
     def date(self) -> date:
         return self.data_valuta
+
 
 class Rows(list[Row]):
     def __init__(self, name: str, iterable: Iterable[Row]=()):

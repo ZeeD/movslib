@@ -9,4 +9,7 @@ setup(name='movs',
       py_modules=find_packages(),
       package_data={
           'movs': ['py.typed'],
-      })
+      },
+      install_requires=[
+          'tabula-py',
+      ])

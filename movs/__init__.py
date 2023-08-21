@@ -1,10 +1,10 @@
+from collections.abc import Callable
 from collections.abc import Iterable
 from dataclasses import fields
 from datetime import date
 from datetime import datetime
 from decimal import Decimal
 from itertools import islice
-from collections.abc import Callable
 from typing import overload
 from typing import TextIO
 

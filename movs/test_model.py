@@ -4,6 +4,7 @@ from unittest import TestCase
 
 from .model import Row
 from .model import Rows
+from .model import ZERO
 
 DATA_CONTABILE = date(2022, 11, 5)
 DATA_VALUTA = date(2022, 11, 6)
@@ -17,7 +18,7 @@ class TestRow(TestCase):
         money = Decimal(123)
         for expected, addebiti, accrediti in ((-money, money, None),
                                               (money, None, money),
-                                              (Row.zero, None, None)):
+                                              (ZERO, None, None)):
             with self.subTest(expected=expected,
                               accrediti=accrediti,
                               addebiti=addebiti):
