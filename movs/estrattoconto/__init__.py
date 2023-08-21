@@ -121,7 +121,7 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
         for _, row in table.iterrows():
             try:
                 data, valuta, *_,  addebiti, accrediti, descr = row.to_list()
-            except ValueError: # Gennaio 2023
+            except ValueError:  # Gennaio 2023
                 continue
             if all(map(isnan_, [data, valuta, addebiti, accrediti])):
                 if not t_row:
