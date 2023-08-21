@@ -13,6 +13,8 @@ PATH_3 = f'{dirname(__file__)}/../test_estrattoconto_3.pdf'
 
 
 class TestEstrattoconto(TestCase):
+    maxDiff = None
+
     def test_base_path_1(self) -> None:
         kv, rows = read_estrattoconto(PATH_1)
 

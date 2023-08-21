@@ -138,7 +138,7 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
         else:
             h()
 
-    return ret
+    return list(reversed(ret))
 
 
 @overload
