@@ -139,7 +139,8 @@ def read_estrattoconto(fn: str, name: str) -> tuple[KV, Rows]: ...
 def read_estrattoconto(fn: str, name: str | None = None) -> tuple[KV, list[Row] | Rows]:
     template = {
         2: TEMPLATE_2,
-        3: TEMPLATE_3
+        3: TEMPLATE_3,
+        10: TEMPLATE_2,  # dicembre
     }[len(PdfReader(fn).pages)]
 
     tables = read_pdf_with_template(fn,
