@@ -18,8 +18,10 @@ from ..model import KV
 from ..model import Row
 from ..model import Rows
 from ..model import ZERO
+from pypdf import PdfReader
 
-TEMPLATE = f'{dirname(__file__)}/template.json'
+TEMPLATE_2 = f'{dirname(__file__)}/template_2.json'
+TEMPLATE_3 = f'{dirname(__file__)}/template_3.json'
 
 
 @overload
@@ -68,8 +70,8 @@ def read_kv(tables: list[DataFrame]) -> KV:
     last = tables[-1]
     _, lastrow = list(last.iterrows())[-1]
     _, _, _, accrediti, descr = lastrow.to_list()
-    assert isinstance(accrediti, str)
-    assert isinstance(descr, str)
+    assert isinstance(accrediti, str), f'{type(accrediti)=}, {accrediti=}'
+    assert isinstance(descr, str), f'{type(descr)=}, {descr=}'
     assert descr == 'SALDO FINALE'
     saldo_contabile = saldo_disponibile = conv_decimal(accrediti)
 
@@ -135,8 +137,13 @@ def read_estrattoconto(fn: str, name: str) -> tuple[KV, Rows]: ...
 
 
 def read_estrattoconto(fn: str, name: str | None = None) -> tuple[KV, list[Row] | Rows]:
+    template = {
+        2: TEMPLATE_2,
+        3: TEMPLATE_3
+    }[len(PdfReader(fn).pages)]
+
     tables = read_pdf_with_template(fn,
-                                    TEMPLATE,
+                                    template,
                                     pandas_options={'header': None})
     assert isinstance(tables, list)
     kv = read_kv(tables)

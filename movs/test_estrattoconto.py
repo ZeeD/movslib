@@ -103,8 +103,6 @@ class TestEstrattoconto(TestCase):
 
     def test_path_2(self) -> None:
         kv, rows = read_estrattoconto(PATH_2)
-        print(kv)
-        print(rows)
 
 
 if __name__ == '__main__':
