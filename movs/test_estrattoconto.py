@@ -7,12 +7,13 @@ from unittest import TestCase
 from .estrattoconto import read_estrattoconto
 from .model import Row
 
-PATH = f'{dirname(__file__)}/../test_estrattoconto.pdf'
+PATH_1 = f'{dirname(__file__)}/../test_estrattoconto_1.pdf'
+PATH_2 = f'{dirname(__file__)}/../test_estrattoconto_2.pdf'
 
 
 class TestEstrattoconto(TestCase):
-    def test_base(self) -> None:
-        kv, rows = read_estrattoconto(PATH)
+    def test_base_path_1(self) -> None:
+        kv, rows = read_estrattoconto(PATH_1)
 
         # kv
         self.assertEqual(date(2022, 8, 31), kv.da)
@@ -99,6 +100,11 @@ class TestEstrattoconto(TestCase):
         # i = 3;  self.assertEqual(expected_rows[i], rows[i], f'{expected_rows[i]}\n{rows[i]}')
 
         self.assertEqual(expected_rows, rows)
+
+    def test_path_2(self) -> None:
+        kv, rows = read_estrattoconto(PATH_2)
+        print(kv)
+        print(rows)
 
 
 if __name__ == '__main__':
