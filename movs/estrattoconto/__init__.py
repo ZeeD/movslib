@@ -72,7 +72,7 @@ def read_kv(tables: list[DataFrame]) -> KV:
 
     last = tables[-1]
     _, lastrow = list(last.iterrows())[-1]
-    _, _, _, accrediti, descr = lastrow.to_list()
+    *_, accrediti, descr = lastrow.to_list()
     assert isinstance(accrediti, str), f'{type(accrediti)=}, {accrediti=}'
     assert isinstance(descr, str), f'{type(descr)=}, {descr=}'
     assert descr == 'SALDO FINALE'
@@ -111,12 +111,18 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
             nonlocal ret
             nonlocal t_row
 
-            if t_row and t_row['descrizione_operazioni'] not in ('TOTALE USCITE', 'TOTALE ENTRATE'):
+            if t_row and t_row['descrizione_operazioni'] not in ('SALDO INIZIALE',
+                                                                 'SALDO FINALE',
+                                                                 'TOTALE USCITE',
+                                                                 'TOTALE ENTRATE'):
                 ret.append(Row(**t_row))
             t_row = {}
 
         for _, row in table.iterrows():
-            data, valuta, *_,  addebiti, accrediti, descr = row.to_list()
+            try:
+                data, valuta, *_,  addebiti, accrediti, descr = row.to_list()
+            except ValueError: # Gennaio 2023
+                continue
             if all(map(isnan_, [data, valuta, addebiti, accrediti])):
                 if not t_row:
                     raise Exception('missing continuation')
@@ -132,8 +138,7 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
         else:
             h()
 
-    # drop 'SALDO INIZIALE' and 'SALDO FINALE'
-    return ret[1:-1]
+    return ret
 
 
 @overload
