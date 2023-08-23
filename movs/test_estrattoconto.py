@@ -7,6 +7,8 @@ from unittest import TestCase
 from .estrattoconto import read_estrattoconto
 from .model import Row
 
+# ruff: noqa: E501
+
 PATH_1 = f'{dirname(__file__)}/../test_estrattoconto_1.pdf'
 PATH_2 = f'{dirname(__file__)}/../test_estrattoconto_2.pdf'
 PATH_3 = f'{dirname(__file__)}/../test_estrattoconto_3.pdf'

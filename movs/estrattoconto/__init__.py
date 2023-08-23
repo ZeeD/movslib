@@ -1,21 +1,16 @@
 from datetime import date
 from datetime import datetime
 from decimal import Decimal
-from itertools import count
 from math import isnan
-from math import nan
 from os.path import dirname
-from typing import Any
 from typing import Final
-from typing import Literal
 from typing import NotRequired
 from typing import overload
 from typing import TypedDict
 
 from pandas import DataFrame
-from tabula.io import read_pdf_with_template
-
 from pypdf import PdfReader
+from tabula.io import read_pdf_with_template
 
 from ..model import KV
 from ..model import Row
