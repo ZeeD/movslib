@@ -17,7 +17,7 @@ def check_scansioni(fn: str) -> None:
     print(f'{finale_money=}')
     actual = sum((row.money for row in rows), iniziale_money)
     print(f'      {actual=}')
-    assert finale_money == actual
+    assert finale_money == actual, f'{finale_money-actual=}'
 
 
 def main() -> None:
