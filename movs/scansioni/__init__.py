@@ -25,7 +25,7 @@ def parse_row(row: str) -> Row:
                parse_date(row[12:24]) or date.min,
                parse_decimal(row[24:36]),
                parse_decimal(row[36:48]),
-               row[48:-2])
+               row[48:-2].rstrip())
 
 
 @overload
