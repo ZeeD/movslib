@@ -41,6 +41,6 @@ class Row:
 
 
 class Rows(list[Row]):
-    def __init__(self, name: str, iterable: Iterable[Row] = ()):
+    def __init__(self, name: str, iterable: Iterable[Row] = ()) -> None:
         super().__init__(iterable)
         self.name = name

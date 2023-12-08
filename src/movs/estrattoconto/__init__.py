@@ -1,69 +1,74 @@
+from datetime import UTC
 from datetime import date
 from datetime import datetime
 from decimal import Decimal
 from math import isnan
-from os.path import dirname
+from pathlib import Path
 from typing import Final
 from typing import NotRequired
-from typing import overload
 from typing import TypedDict
+from typing import overload
 
 from pandas import DataFrame
 from pypdf import PdfReader
 from tabula.io import read_pdf_with_template
 
-from ..model import KV
-from ..model import Row
-from ..model import Rows
-from ..model import ZERO
+from movs.model import KV
+from movs.model import ZERO
+from movs.model import Row
+from movs.model import Rows
 
-TEMPLATE_1: Final = f'{dirname(__file__)}/template_1.json'
-TEMPLATE_2: Final = f'{dirname(__file__)}/template_2.json'
-TEMPLATE_3: Final = f'{dirname(__file__)}/template_3.json'
-
-
-@overload
-def conv_date(dt: str) -> date: ...
+TEMPLATE_1: Final = f'{Path(__file__).parent}/template_1.json'
+TEMPLATE_2: Final = f'{Path(__file__).parent}/template_2.json'
+TEMPLATE_3: Final = f'{Path(__file__).parent}/template_3.json'
 
 
 @overload
-def conv_date(dt: float) -> None: ...
+def conv_date(dt: str) -> date:
+    ...
+
+
+@overload
+def conv_date(dt: float) -> None:
+    ...
 
 
 def conv_date(dt: str | float) -> date | None:
     if isinstance(dt, float):
-        assert isnan(dt), f'{dt=}'
+        assert isnan(dt), f'{dt =}'
         return None
-    return datetime.strptime(dt, '%d/%m/%y').date()
+    return datetime.strptime(dt, '%d/%m/%y').replace(tzinfo=UTC).date()
 
 
 @overload
-def conv_decimal(dec: str) -> Decimal: ...
+def conv_decimal(dec: str) -> Decimal:
+    ...
 
 
 @overload
-def conv_decimal(dec: float) -> None: ...
+def conv_decimal(dec: float) -> None:
+    ...
 
 
 def conv_decimal(dec: str | float) -> Decimal | None:
     if isinstance(dec, float):
-        assert isnan(dec), f'{dec=}'
+        assert isnan(dec), f'{dec =}'
         return None
     return Decimal(dec.replace('.', '').replace(',', '.'))
 
 
 def read_kv(tables: list[DataFrame]) -> KV:
-    month = tables[0].at[0, 0]
+    month = tables[0].loc[0, 0]
     assert isinstance(month, str), f'{type(month)=}, {month=}'
     da = a = saldo_al = conv_date(month)
 
-    conto_bancoposta = f'{tables[1].at[0,0]:012d}'
-    assert isinstance(conto_bancoposta,
-                      str), f'{type(conto_bancoposta)=}, {conto_bancoposta=}'
-
-    intestato_a = tables[2].at[0, 0]
+    conto_bancoposta = f'{tables[1].loc[0, 0]:012d}'
     assert isinstance(
-        intestato_a, str), f'{type(intestato_a)=}, {intestato_a=}'
+        conto_bancoposta, str
+    ), f'{type(conto_bancoposta)=}, {conto_bancoposta=}'
+
+    intestato_a = tables[2].loc[0, 0]
+    assert isinstance(intestato_a, str), f'{type(intestato_a)=}, {intestato_a=}'
 
     last = tables[-1]
     _, lastrow = list(last.iterrows())[-1]
@@ -73,14 +78,16 @@ def read_kv(tables: list[DataFrame]) -> KV:
     assert descr == 'SALDO FINALE'
     saldo_contabile = saldo_disponibile = conv_decimal(accrediti)
 
-    return KV(da,
-              a,
-              'Tutte',
-              conto_bancoposta,
-              intestato_a,
-              saldo_al,
-              ZERO if saldo_contabile is None else saldo_contabile,
-              ZERO if saldo_disponibile is None else saldo_disponibile)
+    return KV(
+        da,
+        a,
+        'Tutte',
+        conto_bancoposta,
+        intestato_a,
+        saldo_al,
+        ZERO if saldo_contabile is None else saldo_contabile,
+        ZERO if saldo_disponibile is None else saldo_disponibile,
+    )
 
 
 # copyed from Row
@@ -96,6 +103,11 @@ def isnan_(obj: float | str) -> bool:
     return False if isinstance(obj, str) else isnan(obj)
 
 
+class MissingContinuationError(Exception):
+    def __init__(self) -> None:
+        super().__init__('missing continuation')
+
+
 def read_csv(tables: list[DataFrame]) -> list[Row]:
     ret: list[Row] = []
 
@@ -106,21 +118,23 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
             nonlocal ret
             nonlocal t_row
 
-            if t_row and t_row['descrizione_operazioni'] not in ('SALDO INIZIALE',
-                                                                 'SALDO FINALE',
-                                                                 'TOTALE USCITE',
-                                                                 'TOTALE ENTRATE'):
+            if t_row and t_row['descrizione_operazioni'] not in (
+                'SALDO INIZIALE',
+                'SALDO FINALE',
+                'TOTALE USCITE',
+                'TOTALE ENTRATE',
+            ):
                 ret.append(Row(**t_row))
             t_row = {}
 
         for _, row in table.iterrows():
             try:
-                data, valuta, *_,  addebiti, accrediti, descr = row.to_list()
+                data, valuta, *_, addebiti, accrediti, descr = row.to_list()
             except ValueError:  # Gennaio 2023
                 continue
             if all(map(isnan_, [data, valuta, addebiti, accrediti])):
                 if not t_row:
-                    raise Exception('missing continuation')
+                    raise MissingContinuationError
                 t_row['descrizione_operazioni'] += f' {descr}'
             else:
                 h()
@@ -130,21 +144,24 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
                 t_row['addebiti'] = conv_decimal(addebiti)
                 t_row['accrediti'] = conv_decimal(accrediti)
                 t_row['descrizione_operazioni'] = descr
-        else:
-            h()
+        h()
 
     return list(reversed(ret))
 
 
 @overload
-def read_estrattoconto(fn: str) -> tuple[KV, list[Row]]: ...
+def read_estrattoconto(fn: str) -> tuple[KV, list[Row]]:
+    ...
 
 
 @overload
-def read_estrattoconto(fn: str, name: str) -> tuple[KV, Rows]: ...
+def read_estrattoconto(fn: str, name: str) -> tuple[KV, Rows]:
+    ...
 
 
-def read_estrattoconto(fn: str, name: str | None = None) -> tuple[KV, list[Row] | Rows]:
+def read_estrattoconto(
+    fn: str, name: str | None = None
+) -> tuple[KV, list[Row] | Rows]:
     template = {
         1: TEMPLATE_1,
         2: TEMPLATE_2,
@@ -153,9 +170,9 @@ def read_estrattoconto(fn: str, name: str | None = None) -> tuple[KV, list[Row] 
         13: TEMPLATE_2,  # marzo 2021
     }[len(PdfReader(fn).pages)]
 
-    tables = read_pdf_with_template(fn,
-                                    template,
-                                    pandas_options={'header': None})
+    tables = read_pdf_with_template(
+        fn, template, pandas_options={'header': None}
+    )
     assert isinstance(tables, list)
     kv = read_kv(tables)
     csv = read_csv(tables)

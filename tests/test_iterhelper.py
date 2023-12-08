@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from .iterhelper import zip_with_next
+from movs.iterhelper import zip_with_next
 
 
 class TestIterHelper(TestCase):

@@ -3,14 +3,14 @@ from decimal import Decimal
 from io import StringIO
 from unittest import TestCase
 
-from . import conv_date
-from . import conv_date_inv
-from . import fmt_value
-from . import read_csv
-from . import read_kv
-from . import write_kv
-from .model import KV
-from .model import Row
+from movs.model import KV
+from movs.model import Row
+from movs.movs import conv_date
+from movs.movs import conv_date_inv
+from movs.movs import fmt_value
+from movs.movs import read_csv
+from movs.movs import read_kv
+from movs.movs import write_kv
 
 
 class TestMovs(TestCase):
@@ -33,16 +33,30 @@ class TestMovs(TestCase):
         self.assertEqual(expected, actual)
 
     def test_read_kv(self) -> None:
-        expected = KV(None, None, 'tipo', 'conto_bancoposta',
-                      'intestato_a', None, Decimal(0), Decimal(0))
-        actual = read_kv(iter(('',
-                               '',
-                               ': tipo',
-                               ': conto_bancoposta',
-                               ': intestato_a',
-                               '',
-                               ': 0_____',
-                               ': 0_____')))
+        expected = KV(
+            None,
+            None,
+            'tipo',
+            'conto_bancoposta',
+            'intestato_a',
+            None,
+            Decimal(0),
+            Decimal(0),
+        )
+        actual = read_kv(
+            iter(
+                (
+                    '',
+                    '',
+                    ': tipo',
+                    ': conto_bancoposta',
+                    ': intestato_a',
+                    '',
+                    ': 0_____',
+                    ': 0_____',
+                )
+            )
+        )
 
         self.assertEqual(expected, actual)
 
@@ -71,26 +85,39 @@ class TestMovs(TestCase):
         self.assertEqual(expected, actual)
 
     def test_write_kv(self) -> None:
-        expected = (' da: (gg/mm/aaaa): \n'
-                    ' a: (gg/mm/aaaa): \n'
-                    ' Tipo(operazioni): tipo\n'
-                    ' Conto BancoPosta n.: conto_bancoposta\n'
-                    ' Intestato a: intestato_a\n'
-                    ' Saldo al: \n'
-                    ' Saldo contabile: +0 Euro\n'
-                    ' Saldo disponibile: +0 Euro\n')
+        expected = (
+            ' da: (gg/mm/aaaa): \n'
+            ' a: (gg/mm/aaaa): \n'
+            ' Tipo(operazioni): tipo\n'
+            ' Conto BancoPosta n.: conto_bancoposta\n'
+            ' Intestato a: intestato_a\n'
+            ' Saldo al: \n'
+            ' Saldo contabile: +0 Euro\n'
+            ' Saldo disponibile: +0 Euro\n'
+        )
         with StringIO() as stringio:
-            write_kv(stringio, KV(None, None, 'tipo', 'conto_bancoposta',
-                                  'intestato_a', None, Decimal(0), Decimal(0)))
+            write_kv(
+                stringio,
+                KV(
+                    None,
+                    None,
+                    'tipo',
+                    'conto_bancoposta',
+                    'intestato_a',
+                    None,
+                    Decimal(0),
+                    Decimal(0),
+                ),
+            )
             actual = stringio.getvalue()
 
         self.assertEqual(expected, actual)
 
     def test_read_csv(self) -> None:
-        expected = [Row(date(1982, 5, 11),
-                        date(2022, 5, 11), Decimal('12'), None, '')]
-        actual = read_csv(('',
-                           ' 11/05/1982       11/05/2022    12'))
+        expected = [
+            Row(date(1982, 5, 11), date(2022, 5, 11), Decimal('12'), None, '')
+        ]
+        actual = read_csv(('', ' 11/05/1982       11/05/2022    12'))
 
         self.assertListEqual(expected, list(actual))
 
@@ -101,10 +128,10 @@ class TestMovs(TestCase):
             list(read_csv(('', ' 11/05/1982')))
 
     def test_write_csv(self) -> None:
-        expected = [Row(date(1982, 5, 11),
-                        date(2022, 5, 11), Decimal('12'), None, '')]
-        actual = read_csv(('',
-                           ' 11/05/1982       11/05/2022    12'))
+        expected = [
+            Row(date(1982, 5, 11), date(2022, 5, 11), Decimal('12'), None, '')
+        ]
+        actual = read_csv(('', ' 11/05/1982       11/05/2022    12'))
 
         self.assertListEqual(expected, list(actual))
 
