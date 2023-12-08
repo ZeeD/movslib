@@ -8,7 +8,6 @@ dependencies = [
 #    'jpype1',
 ]
 
-
 [project.urls]
 Homepage = 'https://github.com/ZeeD/movs'
 Repository = 'https://github.com/ZeeD/movs.git'
@@ -22,6 +21,9 @@ devtools = [
 [tool.setuptools.packages.find]
 where = ['src', 'tests']
 namespaces = false
+
+[tool.setuptools.package-data]
+movs = ['py.typed']
 
 [tool.mypy]
 mypy_path = 'src,tests'
