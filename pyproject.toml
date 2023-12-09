@@ -9,8 +9,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = 'https://github.com/ZeeD/movs'
-Repository = 'https://github.com/ZeeD/movs.git'
+Homepage = 'https://github.com/ZeeD/movslib'
+Repository = 'https://github.com/ZeeD/movslib.git'
 
 [project.optional-dependencies]
 devtools = [
