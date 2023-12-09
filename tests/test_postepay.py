@@ -4,9 +4,9 @@ from pathlib import Path
 from unittest import TestCase
 from unittest import main
 
-from movs.model import KV
-from movs.model import Row
-from movs.postepay import read_postepay
+from movslib.model import KV
+from movslib.model import Row
+from movslib.postepay import read_postepay
 
 PATH = f'{Path(__file__).parent}/test_postepay.pdf'
 

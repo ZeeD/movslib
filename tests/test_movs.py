@@ -3,14 +3,14 @@ from decimal import Decimal
 from io import StringIO
 from unittest import TestCase
 
-from movs.model import KV
-from movs.model import Row
-from movs.movs import conv_date
-from movs.movs import conv_date_inv
-from movs.movs import fmt_value
-from movs.movs import read_csv
-from movs.movs import read_kv
-from movs.movs import write_kv
+from movslib.model import KV
+from movslib.model import Row
+from movslib.movs import conv_date
+from movslib.movs import conv_date_inv
+from movslib.movs import fmt_value
+from movslib.movs import read_csv
+from movslib.movs import read_kv
+from movslib.movs import write_kv
 
 
 class TestMovs(TestCase):

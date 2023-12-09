@@ -4,8 +4,8 @@ from pathlib import Path
 from unittest import TestCase
 from unittest import main
 
-from movs.estrattoconto import read_estrattoconto
-from movs.model import Row
+from movslib.estrattoconto import read_estrattoconto
+from movslib.model import Row
 
 PATH_1 = f'{Path(__file__).parent}/test_estrattoconto_1.pdf'
 PATH_2 = f'{Path(__file__).parent}/test_estrattoconto_2.pdf'

@@ -2,9 +2,9 @@ from datetime import date
 from decimal import Decimal
 from unittest import TestCase
 
-from movs.model import ZERO
-from movs.model import Row
-from movs.model import Rows
+from movslib.model import ZERO
+from movslib.model import Row
+from movslib.model import Rows
 
 DATA_CONTABILE = date(2022, 11, 5)
 DATA_VALUTA = date(2022, 11, 6)

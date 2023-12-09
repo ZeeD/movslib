@@ -23,7 +23,7 @@ where = ['src']
 namespaces = false
 
 [tool.setuptools.package-data]
-movs = ['py.typed']
+movslib = ['py.typed']
 
 [tool.mypy]
 mypy_path = 'src,tests'

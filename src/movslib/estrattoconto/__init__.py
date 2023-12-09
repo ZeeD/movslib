@@ -13,10 +13,10 @@ from pandas import DataFrame
 from pypdf import PdfReader
 from tabula.io import read_pdf_with_template
 
-from movs.model import KV
-from movs.model import ZERO
-from movs.model import Row
-from movs.model import Rows
+from movslib.model import KV
+from movslib.model import ZERO
+from movslib.model import Row
+from movslib.model import Rows
 
 TEMPLATE_1: Final = f'{Path(__file__).parent}/template_1.json'
 TEMPLATE_2: Final = f'{Path(__file__).parent}/template_2.json'
