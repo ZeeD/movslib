@@ -29,18 +29,17 @@ def conv_kv_date(dt: str) -> date:
 
 
 @overload
-def conv_decimal(dec: str) -> Decimal:
-    ...
+def conv_decimal(dec: str) -> Decimal: ...
 
 
 @overload
-def conv_decimal(dec: float) -> None:
-    ...
+def conv_decimal(dec: float) -> None: ...
 
 
 def conv_decimal(dec: str | float) -> Decimal | None:
     if isinstance(dec, float):
-        assert isnan(dec), f'{dec=}'
+        if not isnan(dec):
+            raise TypeError(dec)
         return None
     return Decimal(dec.replace('.', '').replace(',', '.').replace('€', ''))
 
@@ -50,25 +49,27 @@ def read_kv(fn: str) -> KV:
         fn,
         pandas_options={'header': None},
         pages=1,
-        area=[
-            [0, 400, 100, 600],
-            [140, 120, 170, 210],
-            [170, 0, 200, 600],
-        ],
+        area=[[0, 400, 100, 600], [140, 120, 170, 210], [170, 0, 200, 600]],
     )
-    assert isinstance(tables, list)
+    if not isinstance(tables, list):
+        raise TypeError(tables)
     data, numero_intestato, saldi = tables
 
     tipo = numero_intestato.loc[0, 0]
-    assert isinstance(tipo, str)
+    if not isinstance(tipo, str):
+        raise TypeError(tipo)
     conto_bancoposta = numero_intestato.loc[1, 0]
-    assert isinstance(conto_bancoposta, str)
+    if not isinstance(conto_bancoposta, str):
+        raise TypeError(conto_bancoposta)
     intestato_a = data.loc[0, 0]
-    assert isinstance(intestato_a, str)
+    if not isinstance(intestato_a, str):
+        raise TypeError(intestato_a)
     saldo_contabile = saldi.loc[0, 3]
-    assert isinstance(saldo_contabile, str)
+    if not isinstance(saldo_contabile, str):
+        raise TypeError(saldo_contabile)
     saldo_disponibile = saldi.loc[0, 5]
-    assert isinstance(saldo_disponibile, str)
+    if not isinstance(saldo_disponibile, str):
+        raise TypeError(saldo_disponibile)
     return KV(
         None,
         None,
@@ -83,7 +84,8 @@ def read_kv(fn: str) -> KV:
 
 def read_csv(fn: str) -> list[Row]:
     tables = read_pdf(fn, pages='all', lattice=True)
-    assert isinstance(tables, list)
+    if not isinstance(tables, list):
+        raise TypeError(tables)
     n: Final = 5
     tables = [table for table in tables if len(table.columns) == n]
     tables[0].drop(index=0, inplace=True)  # noqa: PD002
@@ -104,13 +106,11 @@ def read_csv(fn: str) -> list[Row]:
 
 
 @overload
-def read_postepay(fn: str) -> tuple[KV, list[Row]]:
-    ...
+def read_postepay(fn: str) -> tuple[KV, list[Row]]: ...
 
 
 @overload
-def read_postepay(fn: str, name: str) -> tuple[KV, Rows]:
-    ...
+def read_postepay(fn: str, name: str) -> tuple[KV, Rows]: ...
 
 
 def read_postepay(

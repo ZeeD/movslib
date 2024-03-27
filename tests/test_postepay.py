@@ -1,3 +1,5 @@
+# ruff: noqa: E501
+
 from datetime import date
 from decimal import Decimal
 from pathlib import Path

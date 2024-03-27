@@ -33,13 +33,11 @@ def parse_row(row: str) -> Row:
 
 
 @overload
-def read_scansioni(fn: str) -> tuple[KV, list[Row]]:
-    ...
+def read_scansioni(fn: str) -> tuple[KV, list[Row]]: ...
 
 
 @overload
-def read_scansioni(fn: str, name: str) -> tuple[KV, Rows]:
-    ...
+def read_scansioni(fn: str, name: str) -> tuple[KV, Rows]: ...
 
 
 def read_scansioni(

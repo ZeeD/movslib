@@ -1,5 +1,3 @@
-from collections.abc import Callable
-from collections.abc import Iterable
 from dataclasses import fields
 from datetime import UTC
 from datetime import date
@@ -7,6 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from itertools import islice
 from pathlib import Path
+from typing import TYPE_CHECKING
 from typing import TextIO
 from typing import overload
 
@@ -14,6 +13,11 @@ from .iterhelper import zip_with_next
 from .model import KV
 from .model import Row
 from .model import Rows
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from collections.abc import Iterable
+
 
 csv_field_indexes = list(zip_with_next((1, 18, 32, 50, 69), None))
 
@@ -29,7 +33,7 @@ def conv_date_inv(d: date) -> str:
     return d.strftime('%d/%m/%Y')
 
 
-def read_kv(kv_file: Iterable[str]) -> KV:
+def read_kv(kv_file: 'Iterable[str]') -> KV:
     def next_token() -> str:
         return next(iter(kv_file)).rstrip().split(': ')[-1]
 
@@ -58,7 +62,7 @@ def read_kv(kv_file: Iterable[str]) -> KV:
 
 
 def fmt_value(
-    e: None | date | Decimal | str, conv_decimal_inv: Callable[[Decimal], str]
+    e: None | date | Decimal | str, conv_decimal_inv: 'Callable[[Decimal], str]'
 ) -> str:
     if e is None:
         return ''
@@ -99,7 +103,7 @@ class IsNoneError(ValueError):
         super().__init__(f'{what=}')
 
 
-def read_csv(csv_file: Iterable[str]) -> Iterable[Row]:
+def read_csv(csv_file: 'Iterable[str]') -> 'Iterable[Row]':
     def conv_cvs_decimal(dec: str) -> Decimal | None:
         if not dec:
             return None
@@ -128,7 +132,7 @@ def read_csv(csv_file: Iterable[str]) -> Iterable[Row]:
         )
 
 
-def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
+def write_csv(f: TextIO, csv: 'Iterable[Row]') -> None:
     def conv_csv_decimal_inv(d: Decimal) -> str:
         return f'{d:,}'.replace(',', '_').replace('.', ',').replace('_', '.')
 
@@ -154,13 +158,11 @@ def write_csv(f: TextIO, csv: Iterable[Row]) -> None:
 
 
 @overload
-def read_txt(fn: str) -> tuple[KV, list[Row]]:
-    ...
+def read_txt(fn: str) -> tuple[KV, list[Row]]: ...
 
 
 @overload
-def read_txt(fn: str, name: str) -> tuple[KV, Rows]:
-    ...
+def read_txt(fn: str, name: str) -> tuple[KV, Rows]: ...
 
 
 def read_txt(fn: str, name: str | None = None) -> tuple[KV, list[Row] | Rows]:
@@ -172,7 +174,7 @@ def read_txt(fn: str, name: str | None = None) -> tuple[KV, list[Row] | Rows]:
         return kv, (list(csv) if name is None else Rows(name, csv))
 
 
-def write_txt(fn: str, kv: KV, csv: Iterable[Row]) -> None:
+def write_txt(fn: str, kv: KV, csv: 'Iterable[Row]') -> None:
     with Path(fn).open('w', encoding='UTF-8') as f:
         write_kv(f, kv)
         write_csv(f, csv)

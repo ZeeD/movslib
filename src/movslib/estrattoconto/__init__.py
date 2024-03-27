@@ -4,12 +4,12 @@ from datetime import datetime
 from decimal import Decimal
 from math import isnan
 from pathlib import Path
+from typing import TYPE_CHECKING
 from typing import Final
 from typing import NotRequired
 from typing import TypedDict
 from typing import overload
 
-from pandas import DataFrame
 from pypdf import PdfReader
 from tabula.io import read_pdf_with_template
 
@@ -18,64 +18,69 @@ from movslib.model import ZERO
 from movslib.model import Row
 from movslib.model import Rows
 
+if TYPE_CHECKING:
+    from pandas import DataFrame
+
 TEMPLATE_1: Final = f'{Path(__file__).parent}/template_1.json'
 TEMPLATE_2: Final = f'{Path(__file__).parent}/template_2.json'
 TEMPLATE_3: Final = f'{Path(__file__).parent}/template_3.json'
 
 
 @overload
-def conv_date(dt: str) -> date:
-    ...
+def conv_date(dt: str) -> date: ...
 
 
 @overload
-def conv_date(dt: float) -> None:
-    ...
+def conv_date(dt: float) -> None: ...
 
 
 def conv_date(dt: str | float) -> date | None:
     if isinstance(dt, float):
-        assert isnan(dt), f'{dt =}'
+        if not isnan(dt):
+            raise TypeError(dt)
         return None
     return datetime.strptime(dt, '%d/%m/%y').replace(tzinfo=UTC).date()
 
 
 @overload
-def conv_decimal(dec: str) -> Decimal:
-    ...
+def conv_decimal(dec: str) -> Decimal: ...
 
 
 @overload
-def conv_decimal(dec: float) -> None:
-    ...
+def conv_decimal(dec: float) -> None: ...
 
 
 def conv_decimal(dec: str | float) -> Decimal | None:
     if isinstance(dec, float):
-        assert isnan(dec), f'{dec =}'
+        if not isnan(dec):
+            raise TypeError(dec)
         return None
     return Decimal(dec.replace('.', '').replace(',', '.'))
 
 
-def read_kv(tables: list[DataFrame]) -> KV:
+def read_kv(tables: 'list[DataFrame]') -> KV:
     month = tables[0].loc[0, 0]
-    assert isinstance(month, str), f'{type(month)=}, {month=}'
+    if not isinstance(month, str):
+        raise TypeError(month)
     da = a = saldo_al = conv_date(month)
 
     conto_bancoposta = f'{tables[1].loc[0, 0]:012d}'
-    assert isinstance(
-        conto_bancoposta, str
-    ), f'{type(conto_bancoposta)=}, {conto_bancoposta=}'
+    if not isinstance(conto_bancoposta, str):
+        raise TypeError(conto_bancoposta)
 
     intestato_a = tables[2].loc[0, 0]
-    assert isinstance(intestato_a, str), f'{type(intestato_a)=}, {intestato_a=}'
+    if not isinstance(intestato_a, str):
+        raise TypeError(intestato_a)
 
     last = tables[-1]
     _, lastrow = list(last.iterrows())[-1]
     *_, accrediti, descr = lastrow.to_list()
-    assert isinstance(accrediti, str), f'{type(accrediti)=}, {accrediti=}'
-    assert isinstance(descr, str), f'{type(descr)=}, {descr=}'
-    assert descr == 'SALDO FINALE'
+    if not isinstance(accrediti, str):
+        raise TypeError(accrediti)
+    if not isinstance(descr, str):
+        raise TypeError(descr)
+    if descr != 'SALDO FINALE':
+        raise ValueError(descr)
     saldo_contabile = saldo_disponibile = conv_decimal(accrediti)
 
     return KV(
@@ -108,7 +113,7 @@ class MissingContinuationError(Exception):
         super().__init__('missing continuation')
 
 
-def read_csv(tables: list[DataFrame]) -> list[Row]:
+def read_csv(tables: 'list[DataFrame]') -> list[Row]:
     ret: list[Row] = []
 
     for table in tables[4:]:
@@ -150,13 +155,11 @@ def read_csv(tables: list[DataFrame]) -> list[Row]:
 
 
 @overload
-def read_estrattoconto(fn: str) -> tuple[KV, list[Row]]:
-    ...
+def read_estrattoconto(fn: str) -> tuple[KV, list[Row]]: ...
 
 
 @overload
-def read_estrattoconto(fn: str, name: str) -> tuple[KV, Rows]:
-    ...
+def read_estrattoconto(fn: str, name: str) -> tuple[KV, Rows]: ...
 
 
 def read_estrattoconto(
@@ -173,7 +176,8 @@ def read_estrattoconto(
     tables = read_pdf_with_template(
         fn, template, pandas_options={'header': None}
     )
-    assert isinstance(tables, list)
+    if not isinstance(tables, list):
+        raise TypeError(tables)
     kv = read_kv(tables)
     csv = read_csv(tables)
     return kv, (list(csv) if name is None else Rows(name, csv))
