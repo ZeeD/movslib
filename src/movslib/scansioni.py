@@ -44,7 +44,7 @@ def read_scansioni(
     fn: str, name: str | None = None
 ) -> tuple[KV, list[Row] | Rows]:
     with Path(fn).open() as f:
-        all_rows = [parse_row(row) for row in f.readlines()]
+        all_rows = [parse_row(row) for row in f]
 
     iniziale, *rows, finale = all_rows
     rows.reverse()

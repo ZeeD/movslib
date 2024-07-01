@@ -9,7 +9,7 @@ from movslib.model import Rows
 DATA_CONTABILE = date(2022, 11, 5)
 DATA_VALUTA = date(2022, 11, 6)
 ADDEBITI = Decimal(123)
-ACCREDITI = None
+ACCREDITI: None = None
 DESCRIZIONE_OPERAZIONI = 'DESCRIZIONE_OPERAZIONI'
 
 
