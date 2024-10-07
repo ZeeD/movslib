@@ -2,9 +2,13 @@
 
 from datetime import date
 from decimal import Decimal
+from os import environ
 from pathlib import Path
+from typing import ClassVar
+from typing import override
 from unittest import TestCase
-from unittest import main
+
+from jdk4py import JAVA_HOME
 
 from movslib.model import KV
 from movslib.model import Row
@@ -15,6 +19,23 @@ PATH = f'{Path(__file__).parent}/test_postepay.pdf'
 
 class TestPostepay(TestCase):
     maxDiff = None
+    _orig: ClassVar[str | None] = None
+
+    @override
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls._orig = environ.get('JAVA_HOME', default=None)
+        environ['JAVA_HOME'] = str(JAVA_HOME)
+        super().setUpClass()
+
+    @override
+    @classmethod
+    def tearDownClass(cls) -> None:
+        super().tearDownClass()
+        if cls._orig is None:
+            del environ['JAVA_HOME']
+        else:
+            environ['JAVA_HOME'] = cls._orig
 
     def test_base(self) -> None:
         kv, rows = read_postepay(PATH)
@@ -483,7 +504,3 @@ class TestPostepay(TestCase):
             ],
             rows,
         )
-
-
-if __name__ == '__main__':
-    main()

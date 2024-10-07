@@ -2,9 +2,13 @@
 
 from datetime import date
 from decimal import Decimal
+from os import environ
 from pathlib import Path
+from typing import ClassVar
+from typing import override
 from unittest import TestCase
-from unittest import main
+
+from jdk4py import JAVA_HOME
 
 from movslib.estrattoconto import read_estrattoconto
 from movslib.model import Row
@@ -16,6 +20,23 @@ PATH_3 = f'{Path(__file__).parent}/test_estrattoconto_3.pdf'
 
 class TestEstrattoconto(TestCase):
     maxDiff = None
+    _orig: ClassVar[str | None] = None
+
+    @override
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls._orig = environ.get('JAVA_HOME', default=None)
+        environ['JAVA_HOME'] = str(JAVA_HOME)
+        super().setUpClass()
+
+    @override
+    @classmethod
+    def tearDownClass(cls) -> None:
+        super().tearDownClass()
+        if cls._orig is None:
+            del environ['JAVA_HOME']
+        else:
+            environ['JAVA_HOME'] = cls._orig
 
     def test_base_path_1(self) -> None:
         kv, rows = read_estrattoconto(PATH_1)
@@ -285,7 +306,3 @@ class TestEstrattoconto(TestCase):
         descrizione_operazioni = {row.descrizione_operazioni for row in rows}
         self.assertNotIn('TOTALE USCITE', descrizione_operazioni)
         self.assertNotIn('TOTALE ENTRATE', descrizione_operazioni)
-
-
-if __name__ == '__main__':
-    main()
