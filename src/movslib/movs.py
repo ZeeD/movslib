@@ -9,10 +9,10 @@ from typing import TYPE_CHECKING
 from typing import TextIO
 from typing import overload
 
-from .iterhelper import zip_with_next
-from .model import KV
-from .model import Row
-from .model import Rows
+from movslib.iterhelper import zip_with_next
+from movslib.model import KV
+from movslib.model import Row
+from movslib.model import Rows
 
 if TYPE_CHECKING:
     from collections.abc import Callable

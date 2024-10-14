@@ -10,9 +10,9 @@ from typing import overload
 
 from tabula.io import read_pdf
 
-from .model import KV
-from .model import Row
-from .model import Rows
+from movslib.model import KV
+from movslib.model import Row
+from movslib.model import Rows
 
 
 def conv_date(dt: str) -> date:

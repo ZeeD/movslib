@@ -9,10 +9,10 @@ from warnings import filterwarnings
 
 from openpyxl import load_workbook
 
-from .model import KV
-from .model import ZERO
-from .model import Row
-from .model import Rows
+from movslib.model import KV
+from movslib.model import ZERO
+from movslib.model import Row
+from movslib.model import Rows
 
 if TYPE_CHECKING:
     from collections.abc import Iterable

@@ -5,9 +5,9 @@ from decimal import Decimal
 from pathlib import Path
 from typing import overload
 
-from .model import KV
-from .model import Row
-from .model import Rows
+from movslib.model import KV
+from movslib.model import Row
+from movslib.model import Rows
 
 
 def parse_date(raw: str) -> date | None:
