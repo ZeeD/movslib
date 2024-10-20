@@ -3,26 +3,18 @@ build-backend = "pdm.backend"
 requires = [ "pdm-backend" ]
 
 [project]
-name = "movslib"
-version = "0.0.1"
+name = "zeed-movslib"
+version = "0.0.2"
 requires-python = "==3.12.*"
 classifiers = [
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
+    "jdk4py>=21.0.4.1",
     "openpyxl>=3.1.5",
     "pypdf>=4.2",
     "tabula-py[jpype]>=2.9.3",
-]
-optional-dependencies.dev = [
-    "coverage>=7.5.4",
-    "jdk4py>=21.0.4.1",
-    "mypy>=1.10.1",
-    "pandas-stubs>=2.2.2.240603",
-    "pyproject-fmt>=2.2.4",
-    "ruff>=0.5",
-    "types-openpyxl>=3.1.5.20240918",
 ]
 urls.Homepage = "https://github.com/ZeeD/movslib"
 urls.Repository = "https://github.com/ZeeD/movslib.git"
@@ -30,6 +22,16 @@ urls.Repository = "https://github.com/ZeeD/movslib.git"
 [tool.pdm]
 distribution = true
 plugins = [ "pdm-version" ]
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "coverage>=7.5.4",
+    "mypy>=1.10.1",
+    "pandas-stubs>=2.2.2.240603",
+    "pyproject-fmt>=2.2.4",
+    "ruff>=0.5",
+    "types-openpyxl>=3.1.5.20240918",
+]
 
 [tool.pdm.build]
 excludes = [ "tests" ]
