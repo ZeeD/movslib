@@ -90,7 +90,7 @@ def _read_csv(sheet: 'Worksheet') -> 'Iterable[Row]':
         yield Row(
             data_contabile=_parse_date(contabile_raw),
             data_valuta=_parse_date(valuta_raw),
-            addebiti=importo if importo < 0 else None,
+            addebiti=-importo if importo < 0 else None,
             accrediti=importo if importo > 0 else None,
             descrizione_operazioni=descrizione,
         )

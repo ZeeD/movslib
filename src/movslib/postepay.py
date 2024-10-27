@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from datetime import UTC
 from datetime import date
 from datetime import datetime
@@ -5,14 +6,20 @@ from decimal import Decimal
 from locale import LC_ALL
 from locale import setlocale
 from math import isnan
+from os import environ
+from typing import TYPE_CHECKING
 from typing import Final
 from typing import overload
 
+from jdk4py import JAVA_HOME
 from tabula.io import read_pdf
 
 from movslib.model import KV
 from movslib.model import Row
 from movslib.model import Rows
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 def conv_date(dt: str) -> date:
@@ -44,13 +51,27 @@ def conv_decimal(dec: str | float) -> Decimal | None:
     return Decimal(dec.replace('.', '').replace(',', '.').replace('€', ''))
 
 
+@contextmanager
+def java() -> 'Iterator[None]':
+    _orig = environ.get('JAVA_HOME', default=None)
+    environ['JAVA_HOME'] = str(JAVA_HOME)
+    try:
+        yield
+    finally:
+        if _orig is None:
+            del environ['JAVA_HOME']
+        else:
+            environ['JAVA_HOME'] = _orig
+
+
 def read_kv(fn: str) -> KV:
-    tables = read_pdf(
-        fn,
-        pandas_options={'header': None},
-        pages=1,
-        area=[[0, 400, 100, 600], [140, 120, 170, 210], [170, 0, 200, 600]],
-    )
+    with java():
+        tables = read_pdf(
+            fn,
+            pandas_options={'header': None},
+            pages=1,
+            area=[[0, 400, 100, 600], [140, 120, 170, 210], [170, 0, 200, 600]],
+        )
     if not isinstance(tables, list):
         raise TypeError(tables)
     data, numero_intestato, saldi = tables
@@ -83,7 +104,8 @@ def read_kv(fn: str) -> KV:
 
 
 def read_csv(fn: str) -> list[Row]:
-    tables = read_pdf(fn, pages='all', lattice=True)
+    with java():
+        tables = read_pdf(fn, pages='all', lattice=True)
     if not isinstance(tables, list):
         raise TypeError(tables)
     n: Final = 5
