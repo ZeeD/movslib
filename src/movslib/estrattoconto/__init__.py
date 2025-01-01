@@ -13,6 +13,7 @@ from typing import overload
 from pypdf import PdfReader
 from tabula.io import read_pdf_with_template
 
+from movslib._java import java
 from movslib.model import KV
 from movslib.model import ZERO
 from movslib.model import Row
@@ -173,9 +174,10 @@ def read_estrattoconto(
         13: TEMPLATE_2,  # marzo 2021
     }[len(PdfReader(fn).pages)]
 
-    tables = read_pdf_with_template(
-        fn, template, pandas_options={'header': None}
-    )
+    with java():
+        tables = read_pdf_with_template(
+            fn, template, pandas_options={'header': None}
+        )
     if not isinstance(tables, list):
         raise TypeError(tables)
     kv = read_kv(tables)
