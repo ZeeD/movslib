@@ -45,7 +45,6 @@ def conv_decimal(dec: str | float) -> Decimal | None:
     return Decimal(dec.replace('.', '').replace(',', '.').replace('€', ''))
 
 
-
 def read_kv(fn: str) -> KV:
     with java():
         tables = read_pdf(
