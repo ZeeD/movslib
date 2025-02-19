@@ -1,16 +1,16 @@
-from itertools import chain
-from typing import TYPE_CHECKING
-from typing import TypeVar
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable
-
-T = TypeVar('T')
+from collections.abc import Iterable
+from itertools import pairwise
+from typing import cast
+from typing import overload
 
 
-def zip_with_next(
+@overload
+def zip_with_next[T](
+    it: 'Iterable[T]', last: None
+) -> 'Iterable[tuple[T, None]]': ...
+@overload
+def zip_with_next[T](it: 'Iterable[T]', last: T) -> 'Iterable[tuple[T, T]]': ...
+def zip_with_next[T](
     it: 'Iterable[T]', last: T | None
 ) -> 'Iterable[tuple[T, T | None]]':
-    c = chain(it, (last,))
-    next(c)
-    return zip(it, c, strict=True)
+    return cast(Iterable[tuple[T, T | None]], pairwise((*it, last)))
