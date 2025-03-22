@@ -43,7 +43,7 @@ lint = { composite = [
     "pyproject-fmt pyproject.toml",
     "ruff format .",
     "ruff check --exit-zero .",
-    "dmypy run .",
+    "mypy .",
 ] }
 tests = { composite = [
     "coverage run -m unittest discover --verbose --locals --failfast --catch --start-directory tests",

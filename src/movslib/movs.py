@@ -150,7 +150,7 @@ def write_csv(f: TextIO, csv: 'Iterable[Row]') -> None:
             row_str = fmt_value(value, conv_csv_decimal_inv)
             if b is not None:
                 diff = b - a
-                f.write('%*.*s' % (-diff, diff, row_str))
+                f.write(f'{row_str:{diff}}')
             else:
                 f.write(row_str)
 

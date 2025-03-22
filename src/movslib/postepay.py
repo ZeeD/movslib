@@ -52,6 +52,7 @@ def read_kv(fn: str) -> KV:
             pandas_options={'header': None},
             pages=1,
             area=[[0, 400, 100, 600], [140, 120, 170, 210], [170, 0, 200, 600]],
+            silent=True,
         )
     if not isinstance(tables, list):
         raise TypeError(tables)
@@ -86,7 +87,7 @@ def read_kv(fn: str) -> KV:
 
 def read_csv(fn: str) -> list[Row]:
     with java():
-        tables = read_pdf(fn, pages='all', lattice=True)
+        tables = read_pdf(fn, pages='all', lattice=True, silent=True)
     if not isinstance(tables, list):
         raise TypeError(tables)
     n: Final = 5

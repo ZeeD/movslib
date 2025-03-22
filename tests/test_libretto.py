@@ -81,7 +81,7 @@ class TestLibretto(TestCase):
                 Row(
                     data_contabile=date(2024, 4, 2),
                     data_valuta=date(2023, 12, 31),
-                    addebiti=Decimal('-61.20'),
+                    addebiti=Decimal('61.20'),
                     accrediti=None,
                     descrizione_operazioni='IMPOSTA DI BOLLO PRODOTTI FINANZIARI',
                 ),
