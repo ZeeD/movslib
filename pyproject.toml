@@ -50,6 +50,11 @@ tests = { composite = [
     "coverage report",
     "coverage erase",
 ] }
+bump_and_publish = { composite = [
+    "pdm bump patch --commit --tag",
+    "pdm publish",
+    "git push"
+] }
 
 [tool.ruff]
 line-length = 80

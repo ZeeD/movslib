@@ -9,4 +9,5 @@ remember to run `pdm install --plugins`
 ```bash
 pdm bump patch --commit --tag
 pdm publish
+git push
 ```
