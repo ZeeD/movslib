@@ -92,7 +92,7 @@ def read_csv(fn: str) -> list[Row]:
         raise TypeError(tables)
     n: Final = 5
     tables = [table for table in tables if len(table.columns) == n]
-    tables[0].drop(index=0, inplace=True)  # noqa: PD002
+    tables[0].drop(index=0, inplace=True)
 
     ret: list[Row] = []
     for table in tables:

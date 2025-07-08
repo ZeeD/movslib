@@ -53,7 +53,6 @@ class TestEstrattoconto(TestCase):
 
         # rows
         expected_rows = [
-            # fmt: off
             Row(
                 date(2022, 8, 30),
                 date(2022, 8, 26),
@@ -281,7 +280,7 @@ class TestEstrattoconto(TestCase):
             Row(
                 date(2022, 8, 1),
                 date(2022, 8, 1),
-                Decimal('1500'),
+                Decimal(1500),
                 None,
                 'RICARICA POSTEPAY DA WEB/APP Ricarica Postepay',
             ),
@@ -289,10 +288,9 @@ class TestEstrattoconto(TestCase):
                 date(2022, 8, 1),
                 date(2022, 8, 1),
                 None,
-                Decimal('1500'),
+                Decimal(1500),
                 'BONIFICO TRN BAPPIT22 5034004217772210480160001753IT DA CHREIM ELENA PER Viaggio America',
             ),
-            # fmt: on
         ]
 
         self.assertEqual(expected_rows, rows)

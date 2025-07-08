@@ -93,14 +93,14 @@ def read_csv(fn_sheet: 'str | Worksheet') -> 'Iterable[Row]':
 
 
 @overload
-def read_buoni_xlsx(fn: str) -> 'tuple[KV, list[Row]]': ...
+def read_buoni(fn: str) -> 'tuple[KV, list[Row]]': ...
 
 
 @overload
-def read_buoni_xlsx(fn: str, name: str) -> 'tuple[KV, Rows]': ...
+def read_buoni(fn: str, name: str) -> 'tuple[KV, Rows]': ...
 
 
-def read_buoni_xlsx(
+def read_buoni(
     fn: str, name: str | None = None
 ) -> 'tuple[KV, list[Row] | Rows]':
     sheet = _load_sheet(fn)

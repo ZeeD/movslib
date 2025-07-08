@@ -3,8 +3,7 @@ from typing import Final
 from typing import Protocol
 from typing import overload
 
-from movslib.buoni.csv import read_buoni_csv
-from movslib.buoni.xlsx import read_buoni_xlsx
+from movslib.buoni import read_buoni
 from movslib.estrattoconto import read_estrattoconto
 from movslib.libretto import read_libretto
 from movslib.listamovimentixlsx import read_lista_movimenti_xlsx
@@ -33,12 +32,11 @@ class Reader(Protocol):
 RULES: Final[dict[str, Reader]] = {
     'ListaMovimenti.pdf': read_postepay,
     'RPOL_Movimenti_Libretto.xlsx': read_libretto,
-    'RPOL_PatrimonioBuoni.xlsx': read_buoni_xlsx,
+    'RPOL_PatrimonioBuoni.xlsx': read_buoni,
     '.txt': read_txt,
     '.pdf': read_estrattoconto,
     '.scan': read_scansioni,
     '.xlsx': read_lista_movimenti_xlsx,
-    '.csv': read_buoni_csv,
 }
 
 

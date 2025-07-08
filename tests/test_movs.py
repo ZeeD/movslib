@@ -115,7 +115,7 @@ class TestMovs(TestCase):
 
     def test_read_csv(self) -> None:
         expected = [
-            Row(date(1982, 5, 11), date(2022, 5, 11), Decimal('12'), None, '')
+            Row(date(1982, 5, 11), date(2022, 5, 11), Decimal(12), None, '')
         ]
         actual = read_csv(('', ' 11/05/1982       11/05/2022    12'))
 
@@ -129,7 +129,7 @@ class TestMovs(TestCase):
 
     def test_write_csv(self) -> None:
         expected = [
-            Row(date(1982, 5, 11), date(2022, 5, 11), Decimal('12'), None, '')
+            Row(date(1982, 5, 11), date(2022, 5, 11), Decimal(12), None, '')
         ]
         actual = read_csv(('', ' 11/05/1982       11/05/2022    12'))
 

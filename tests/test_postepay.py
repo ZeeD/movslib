@@ -36,7 +36,6 @@ class TestPostepay(TestCase):
         # rows
         self.assertEqual(
             [
-                # fmt: off
                 Row(
                     date(2023, 8, 19),
                     date(2023, 8, 17),
@@ -478,7 +477,6 @@ class TestPostepay(TestCase):
                     Decimal('250.00'),
                     'RICARICA POSTEPAY DA BPOL ADDEBITO SU CONTO 2022-05-18. RICARICA EFFETTUATA DA VITO DE TULLIO PER INITIAL',
                 ),
-                # fmt: on
             ],
             rows,
         )
