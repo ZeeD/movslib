@@ -24,7 +24,7 @@ urls.Repository = "https://github.com/ZeeD/movslib.git"
 distribution = true
 plugins = [ "pdm-bump" ]
 
-[tool.pdm.dev-dependencies]
+[dependency-groups]
 dev = [
     "coverage>=7.5.4",
     "mypy>=1.10.1",
