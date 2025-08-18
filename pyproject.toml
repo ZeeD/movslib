@@ -20,25 +20,25 @@ dependencies = [
 urls.Homepage = "https://github.com/ZeeD/movslib"
 urls.Repository = "https://github.com/ZeeD/movslib.git"
 
-[tool.pdm]
-distribution = true
-plugins = [ "pdm-bump" ]
-
 [dependency-groups]
 dev = [
     "coverage>=7.5.4",
     "mypy>=1.10.1",
-    "ruff>=0.5",
-    "pyproject-fmt>=2.2.4",
     "pandas-stubs>=2.2.2.240603",
+    "pyproject-fmt>=2.2.4",
+    "ruff>=0.5",
     "types-openpyxl>=3.1.5.20240918",
 ]
 
+[tool.pdm]
+distribution = true
+plugins = [ "pdm-bump" ]
+
 [tool.pdm.build]
-excludes = [ "tests" ]
+excludes = [ "tests", "demo" ]
 
 [tool.pdm.scripts]
-_.env = { PYTHONPATH = "src:tests" }
+_.env = { PYTHONPATH = "src:tests:demo" }
 lint = { composite = [
     "pyproject-fmt pyproject.toml",
     "ruff format .",
@@ -59,7 +59,7 @@ bump_and_publish = { composite = [
 
 [tool.ruff]
 line-length = 80
-src = [ "src", "tests" ]
+src = [ "demo", "src", "tests" ]
 fix = true
 format.quote-style = "single"
 format.skip-magic-trailing-comma = true
@@ -90,7 +90,7 @@ indent = 4
 
 [tool.coverage.run]
 branch = true
-source = [ "src", "tests" ]
+source = [ "src", "tests", "demo" ]
 
 [tool.coverage.report]
 show_missing = true
@@ -98,6 +98,6 @@ sort = "Cover"
 skip_empty = true
 
 [tool.mypy]
-mypy_path = [ "src", "tests" ]
+mypy_path = [ "src", "tests", "demo" ]
 strict = true
 warn_unused_configs = true
