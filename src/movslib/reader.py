@@ -45,7 +45,7 @@ class UnsupportedSuffixError(Exception): ...
 
 def _get_reader(fn: str) -> Reader:
     for suffix, r in RULES.items():
-        if fn.endswith(suffix):
+        if fn.endswith((suffix, f'{suffix}~')):
             return r
 
     raise UnsupportedSuffixError(fn)
