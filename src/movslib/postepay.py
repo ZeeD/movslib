@@ -8,6 +8,7 @@ from math import isnan
 from typing import Final
 from typing import overload
 
+from pandas.core.frame import DataFrame
 from tabula.io import read_pdf
 
 from movslib._java import java
@@ -45,6 +46,9 @@ def conv_decimal(dec: str | float) -> Decimal | None:
     return Decimal(dec.replace('.', '').replace(',', '.').replace('€', ''))
 
 
+OLD_TABLES_LEN: Final = 3
+
+
 def read_kv(fn: str) -> KV:
     with java():
         tables = read_pdf(
@@ -56,7 +60,11 @@ def read_kv(fn: str) -> KV:
         )
     if not isinstance(tables, list):
         raise TypeError(tables)
-    data, numero_intestato, saldi = tables
+    if len(tables) == OLD_TABLES_LEN:
+        data, numero_intestato, saldi = tables
+    else:  # new format - missing saldi
+        data, numero_intestato = tables
+        saldi = DataFrame([[None, None, None, '0', None, '0']])
 
     tipo = numero_intestato.loc[0, 0]
     if not isinstance(tipo, str):
@@ -92,7 +100,7 @@ def read_csv(fn: str) -> list[Row]:
         raise TypeError(tables)
     n: Final = 5
     tables = [table for table in tables if len(table.columns) == n]
-    tables[0].drop(index=0, inplace=True)
+    tables[0] = tables[0].drop(index=0)
 
     ret: list[Row] = []
     for table in tables:
