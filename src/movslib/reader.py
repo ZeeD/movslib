@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import Final
 from typing import Protocol
@@ -30,6 +31,7 @@ class Reader(Protocol):
 
 
 RULES: Final[dict[str, Reader]] = {
+    'movimenti_libretto_000053361801.xlsx': read_libretto,
     'ListaMovimenti.pdf': read_postepay,
     'RPOL_Movimenti_Libretto.xlsx': read_libretto,
     'RPOL_PatrimonioBuoni.xlsx': read_buoni,
@@ -46,6 +48,12 @@ class UnsupportedSuffixError(Exception): ...
 def _get_reader(fn: str) -> Reader:
     for suffix, r in RULES.items():
         if fn.endswith((suffix, f'{suffix}~')):
+            return r
+        suf, ext = suffix.split('.', 1)
+        if not suf:
+            continue
+        p = Path(fn)
+        if p.stem.startswith(suf) and p.suffix in (f'.{ext}', f'.{ext}~'):
             return r
 
     raise UnsupportedSuffixError(fn)
