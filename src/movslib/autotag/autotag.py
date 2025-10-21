@@ -41,12 +41,26 @@ def _autotag_row(row: 'Row') -> TagRow:
         ret.tags.add(Tags.BOLLETTE)
         ret.tags.add(Tags.LUCE)
 
-    if 'Wind Tre S.p.A.' in row.descrizione_operazioni:
+    if ('Wind Tre S.p.A.' in row.descrizione_operazioni
+        or 'WIND TRE S P A' in row.descrizione_operazioni
+        ):
         ret.tags.add(Tags.BOLLETTE)
         ret.tags.add(Tags.TELEFONO)
 
     if 'SORGENIA S P A' in row.descrizione_operazioni:
         ret.tags.add(Tags.BOLLETTE)
         ret.tags.add(Tags.GAS)
+
+    if 'ESSELUNGA' in row.descrizione_operazioni:
+        ret.tags.add(Tags.SPESA)
+
+    if 'RICARICA POSTEPAY' in row.descrizione_operazioni:
+        ret.tags.add(Tags.RICARICA_POSTEPAY)
+
+    if 'EUROSPIN' in row.descrizione_operazioni:
+        ret.tags.add(Tags.SPESA)
+
+    if 'IPERCOOP' in row.descrizione_operazioni:
+        ret.tags.add(Tags.SPESA)
 
     return ret

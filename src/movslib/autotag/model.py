@@ -20,6 +20,8 @@ class Tags(StrEnum):
     GAS = 'GAS'
     TELEFONO = 'TELEFONO'
     CONDOMINIO = 'CONDOMINIO'
+    SPESA = 'SPESA'
+    RICARICA_POSTEPAY = 'RICARICA_POSTEPAY'
 
 
 @dataclass(frozen=True)
