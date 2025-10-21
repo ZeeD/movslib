@@ -1,3 +1,4 @@
+import logging
 from logging import INFO
 from logging import basicConfig
 from logging import getLogger
@@ -34,6 +35,7 @@ def demo_autotag(rows: 'Rows') -> None:
 
 def main() -> None:
     basicConfig(format='%(message)s', level=INFO, stream=stdout)
+    logging.raiseExceptions = False
 
     _, rows = read(
         '/home/zed/eclipse-workspace/movs-data/BPOL_accumulator_vitoelena.txt',
