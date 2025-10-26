@@ -63,6 +63,11 @@ def _autotag_row(row: 'Row') -> TagRow:
                 'ANTICIPATA',
                 'TINTEGGIATURA SCALE',
                 'BENEF BANCA DI CREDITO COOPERATIVO PER CAUSALE',
+                'per Ordinaria',
+                'PER Ordinaria',
+                'PER gestione ordinaria',
+                'ordinaria',
+                'BENEF Banca di credito cooperativo PER',
             )
         },
         '1 H CLEAN DI ROZZA GIU': [Tags.LAVANDERIA],
