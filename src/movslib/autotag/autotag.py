@@ -16,7 +16,7 @@ def autotag(rows: 'Rows') -> TagRows:
 def _autotag_row(row: 'Row') -> TagRow:
     """Add zero, one, or more tags to a row, based on patterns."""
     accrediti = row.accrediti
-    descrizione_operazioni = (row).descrizione_operazioni
+    descrizione_operazioni = row.descrizione_operazioni
 
     ret = TagRow(
         row.data_contabile,
@@ -25,6 +25,9 @@ def _autotag_row(row: 'Row') -> TagRow:
         accrediti,
         descrizione_operazioni,
     )
+
+    if accrediti is not None:
+        ret.tags.add(Tags.ENTRATE)
 
     for pattern, tags in {'BONIFICO SEPA': [Tags.BONIFICO]}.items():
         if pattern in descrizione_operazioni and accrediti is not None:
@@ -43,10 +46,26 @@ def _autotag_row(row: 'Row') -> TagRow:
         'Wind Tre S.p.A.': [Tags.BOLLETTE, Tags.TELEFONO],
         'WIND TRE S P A': [Tags.BOLLETTE, Tags.TELEFONO],
         'SORGENIA S P A': [Tags.BOLLETTE, Tags.GAS],
-        'ESSELUNGA': [Tags.SPESA],
+        **{
+            p: [Tags.SPESA]
+            for p in ('ESSELUNGA', 'EUROSPIN', 'IPERCOOP', 'SUPERMERCATO')
+        },
         'RICARICA POSTEPAY': [Tags.RICARICA_POSTEPAY],
-        'EUROSPIN': [Tags.SPESA],
-        'IPERCOOP': [Tags.SPESA],
+        **{
+            p: [Tags.CONDOMINIO]
+            for p in (
+                'STUDIO RAG. ANDREA IANNUZZI',
+                'Gestione ordinaria',
+                '-CMAV-',
+                'ORDINARIA',
+                'anticipata',
+                'RIFACIMENTO IMPIANTO VIDEOCITOF',
+                'ANTICIPATA',
+                'TINTEGGIATURA SCALE',
+                'BENEF BANCA DI CREDITO COOPERATIVO PER CAUSALE',
+            )
+        },
+        '1 H CLEAN DI ROZZA GIU': [Tags.LAVANDERIA],
     }.items():
         if pattern in descrizione_operazioni:
             ret.tags.update(tags)
