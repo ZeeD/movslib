@@ -24,6 +24,8 @@ class Tags(StrEnum):
     RICARICA_POSTEPAY = 'RICARICA_POSTEPAY'
     LAVANDERIA = 'LAVANDERIA'
     ENTRATE = 'ENTRATE'
+    RISPARMIO = 'RISPARMIO'
+    LIBRETTO = 'LIBRETTO'
 
 
 @dataclass(frozen=True)

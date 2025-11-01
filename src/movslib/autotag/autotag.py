@@ -71,6 +71,7 @@ def _autotag_row(row: 'Row') -> TagRow:
             )
         },
         '1 H CLEAN DI ROZZA GIU': [Tags.LAVANDERIA],
+        '000053361801': [Tags.RISPARMIO, Tags.LIBRETTO]
     }.items():
         if pattern in descrizione_operazioni:
             ret.tags.update(tags)
