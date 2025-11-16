@@ -48,7 +48,14 @@ def _autotag_row(row: 'Row') -> TagRow:
         'SORGENIA S P A': [Tags.BOLLETTE, Tags.GAS],
         **{
             p: [Tags.SPESA]
-            for p in ('ESSELUNGA', 'EUROSPIN', 'IPERCOOP', 'SUPERMERCATO')
+            for p in (
+                'ESSELUNGA',
+                'EUROSPIN',
+                'IPERCOOP',
+                'SUPERMERCATO',
+                'IL GIGANTE',
+                'ALDI',
+            )
         },
         'RICARICA POSTEPAY': [Tags.RICARICA_POSTEPAY],
         **{
@@ -71,7 +78,9 @@ def _autotag_row(row: 'Row') -> TagRow:
             )
         },
         '1 H CLEAN DI ROZZA GIU': [Tags.LAVANDERIA],
-        '000053361801': [Tags.RISPARMIO, Tags.LIBRETTO]
+        '000053361801': [Tags.RISPARMIO, Tags.LIBRETTO],
+        'COFFEE CAPP': [Tags.MACCHINETTA_CAFFE],
+        **{p: [Tags.TRASPORTI] for p in ['ATM MILAN', 'TRENORD', 'TRENITALIA']},
     }.items():
         if pattern in descrizione_operazioni:
             ret.tags.update(tags)

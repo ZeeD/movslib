@@ -26,6 +26,8 @@ class Tags(StrEnum):
     ENTRATE = 'ENTRATE'
     RISPARMIO = 'RISPARMIO'
     LIBRETTO = 'LIBRETTO'
+    MACCHINETTA_CAFFE = 'MACCHINETTA_CAFFE'
+    TRASPORTI = 'TRASPORTI'
 
 
 @dataclass(frozen=True)
