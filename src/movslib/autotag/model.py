@@ -28,6 +28,7 @@ class Tags(StrEnum):
     LIBRETTO = 'LIBRETTO'
     MACCHINETTA_CAFFE = 'MACCHINETTA_CAFFE'
     TRASPORTI = 'TRASPORTI'
+    DELIVERY = 'DELIVERY'
 
 
 @dataclass(frozen=True)

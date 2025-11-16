@@ -34,8 +34,10 @@ def _autotag_row(row: 'Row') -> TagRow:
             ret.tags.update(tags)
 
     for pattern, tags in {
-        'COMMISSIONI': [Tags.COMMISSIONI],
-        'CANONE': [Tags.COMMISSIONI],
+        **{
+            p: [Tags.COMMISSIONI]
+            for p in ['COMMISSIONI', 'CANONE', 'IMPOSTA DI BOLLO']
+        }
     }.items():
         if descrizione_operazioni.startswith(pattern):
             ret.tags.update(tags)
@@ -46,6 +48,7 @@ def _autotag_row(row: 'Row') -> TagRow:
         'Wind Tre S.p.A.': [Tags.BOLLETTE, Tags.TELEFONO],
         'WIND TRE S P A': [Tags.BOLLETTE, Tags.TELEFONO],
         'SORGENIA S P A': [Tags.BOLLETTE, Tags.GAS],
+        'FASTWEB': [Tags.BOLLETTE, Tags.TELEFONO],
         **{
             p: [Tags.SPESA]
             for p in (
@@ -80,7 +83,11 @@ def _autotag_row(row: 'Row') -> TagRow:
         '1 H CLEAN DI ROZZA GIU': [Tags.LAVANDERIA],
         '000053361801': [Tags.RISPARMIO, Tags.LIBRETTO],
         'COFFEE CAPP': [Tags.MACCHINETTA_CAFFE],
-        **{p: [Tags.TRASPORTI] for p in ['ATM MILAN', 'TRENORD', 'TRENITALIA']},
+        **{
+            p: [Tags.TRASPORTI]
+            for p in ['ATM MILAN', 'TRENORD', 'TRENITALIA', 'AZIENDATRAS']
+        },
+        **{p: [Tags.DELIVERY] for p in ['DELIVEROO']},
     }.items():
         if pattern in descrizione_operazioni:
             ret.tags.update(tags)
